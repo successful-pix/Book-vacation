@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { CurrencyProvider } from "./components/CurrencyProvider";
+import DisplayScale from "./components/DisplayScale";
 
 export const metadata: Metadata = {
   title: "Book Vacation — Flights, Stays & Holidays",
@@ -11,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><CurrencyProvider>{children}</CurrencyProvider></body></html>;
+  return <html lang="en"><body><DisplayScale/><CurrencyProvider>{children}</CurrencyProvider></body></html>;
 }
