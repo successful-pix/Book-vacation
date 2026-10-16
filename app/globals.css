@@ -841,3 +841,94 @@ html[data-display-scale="75"]{font-size:75%}html[data-display-scale="80"]{font-s
 #book-vacation-translate{position:fixed!important;left:-10000px!important;top:0!important;width:1px!important;height:1px!important;overflow:hidden!important;pointer-events:none!important}
 .goog-te-banner-frame.skiptranslate,.goog-te-menu-frame,.goog-te-balloon-frame{display:none!important}body{top:0!important}
 @media(max-width:600px){.travel-topbar.sky-shell-topbar{gap:7px;padding:8px 12px}.travel-topbar.sky-shell-topbar>span:first-child{flex-basis:100%;font-size:11px}.travel-topbar.sky-shell-topbar .topbar-right{width:100%;justify-content:space-between;gap:6px}.travel-topbar.sky-shell-topbar .currency-picker select{min-width:78px;max-width:112px;font-size:12px}.travel-topbar.sky-shell-topbar .shell-language select{min-width:75px;max-width:100px;font-size:12px}.bv-account-page{padding:20px 0 40px!important}.bv-account-layout{width:calc(100% - 24px)!important}.bv-dashboard{gap:16px!important}.bv-dashboard-welcome{padding:20px 16px!important;gap:12px}.bv-dashboard-welcome h1{font-size:25px!important}.bv-dashboard-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}.bv-dashboard-stats article{min-height:82px;padding:12px!important}.bv-dashboard-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}.bv-dashboard-actions>a{min-height:160px;padding:14px 12px!important}.bv-dashboard-columns{grid-template-columns:minmax(0,1fr)!important;gap:13px!important}.bv-preferences-panel{grid-template-columns:minmax(0,1fr)!important;gap:16px!important}.bv-request-row{display:grid!important;grid-template-columns:36px minmax(0,1fr);align-items:start!important}.request-status{grid-column:2;justify-self:start;margin-left:0!important}}
+
+
+/* Final header alignment: keep account action, menu and top controls inside their own rows. */
+.travel-topbar.sky-shell-topbar{
+ display:flex!important;flex-wrap:nowrap!important;align-items:center!important;
+ justify-content:space-between!important;gap:14px!important;min-height:46px;
+ padding:7px clamp(12px,2.4vw,30px)!important;
+}
+.travel-topbar.sky-shell-topbar>span:first-child{
+ flex:1 1 auto!important;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.travel-topbar.sky-shell-topbar .topbar-right{
+ flex:0 1 auto!important;width:auto!important;min-width:0!important;
+ display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+ align-items:center!important;justify-content:flex-end!important;gap:12px!important;
+}
+.travel-topbar.sky-shell-topbar .current-location,
+.travel-topbar.sky-shell-topbar .shell-language,
+.travel-topbar.sky-shell-topbar .currency-picker{flex:0 0 auto!important;align-self:center!important;margin:0!important;}
+.travel-topbar.sky-shell-topbar .shell-language,
+.travel-topbar.sky-shell-topbar .currency-picker{display:inline-flex!important;flex-direction:row!important;align-items:center!important;white-space:nowrap;}
+.travel-topbar.sky-shell-topbar .shell-language select,
+.travel-topbar.sky-shell-topbar .currency-picker select{
+ box-sizing:border-box!important;height:34px!important;min-height:34px!important;
+ line-height:20px!important;margin:0!important;vertical-align:middle!important;
+ transform:none!important;float:none!important;
+}
+.travel-header.sky-shell-header{z-index:80!important;overflow:visible!important;}
+.travel-header.sky-shell-header .travel-header-inner{
+ display:flex!important;align-items:center!important;flex-wrap:nowrap!important;
+ min-height:74px!important;gap:clamp(8px,1.5vw,20px)!important;position:relative;
+}
+.travel-header.sky-shell-header .travel-brand{flex:0 0 auto!important;min-width:0;}
+.travel-header.sky-shell-header .travel-nav{
+ flex:1 1 auto!important;min-width:0;display:flex;align-items:center;
+ justify-content:center;gap:clamp(8px,1.3vw,18px)!important;
+}
+.travel-header.sky-shell-header .travel-nav a{white-space:nowrap;line-height:1.25;padding:7px 0!important;}
+.travel-header.sky-shell-header .travel-header-actions{
+ flex:0 0 auto!important;display:flex!important;align-items:center!important;
+ justify-content:flex-end!important;gap:8px!important;margin:0!important;min-width:0;
+}
+.travel-header.sky-shell-header .travel-account{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 auto!important;white-space:nowrap!important;line-height:1.2!important;
+ margin:0!important;transform:none!important;position:relative;z-index:2;
+}
+.travel-header.sky-shell-header .mobile-menu-toggle{
+ flex:0 0 40px!important;width:40px!important;height:40px!important;
+ display:none;align-items:center!important;justify-content:center!important;
+ margin:0!important;padding:0!important;position:relative!important;top:-2px!important;
+ transform:none!important;z-index:3;border-radius:10px;
+}
+.mobile-bottom-nav{z-index:60!important;}
+@media(max-width:900px){
+ .travel-header.sky-shell-header .travel-header-inner{flex-wrap:wrap!important;gap:8px!important;}
+ .travel-header.sky-shell-header .travel-brand{margin-right:auto;}
+ .travel-header.sky-shell-header .travel-header-actions{margin-left:auto!important;}
+ .travel-header.sky-shell-header .mobile-menu-toggle{display:inline-flex!important;}
+ .travel-header.sky-shell-header .travel-nav{
+  display:none!important;order:5;flex:0 0 100%!important;width:100%;
+  justify-content:flex-start;align-items:stretch;gap:0!important;
+  padding:6px 0 12px;background:#fff;position:relative;z-index:4;
+ }
+ .travel-header.sky-shell-header .travel-nav.is-open{
+  display:flex!important;flex-direction:column!important;
+ }
+ .travel-header.sky-shell-header .travel-nav a{
+  display:block;padding:12px 8px!important;border-top:1px solid #e7edf5;
+ }
+}
+@media(max-width:600px){
+ .travel-topbar.sky-shell-topbar{flex-wrap:wrap!important;gap:6px!important;padding:7px 10px!important;}
+ .travel-topbar.sky-shell-topbar>span:first-child{flex:0 0 100%!important;white-space:nowrap;font-size:10px;}
+ .travel-topbar.sky-shell-topbar .topbar-right{
+  flex:0 0 100%!important;width:100%!important;display:flex!important;
+  flex-direction:row!important;flex-wrap:nowrap!important;justify-content:space-between!important;gap:5px!important;
+ }
+ .travel-topbar.sky-shell-topbar .current-location{max-width:33%!important;min-width:0!important;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+ .travel-topbar.sky-shell-topbar .shell-language{max-width:31%!important;gap:3px!important;}
+ .travel-topbar.sky-shell-topbar .currency-picker{max-width:36%!important;gap:3px!important;}
+ .travel-topbar.sky-shell-topbar .shell-language select{width:84px!important;min-width:0!important;max-width:84px!important;padding:4px 18px 4px 5px!important;font-size:11px!important;}
+ .travel-topbar.sky-shell-topbar .currency-picker select{width:100px!important;min-width:0!important;max-width:100px!important;padding:4px 18px 4px 5px!important;font-size:11px!important;}
+ .travel-topbar.sky-shell-topbar .currency-picker>span{display:none!important;}
+ .travel-topbar.sky-shell-topbar .shell-language svg{width:12px;height:12px;flex:0 0 auto;}
+ .travel-header.sky-shell-header .travel-header-inner{min-height:62px!important;padding-top:2px;padding-bottom:2px;}
+ .travel-header.sky-shell-header .travel-header-actions{gap:6px!important;}
+ .travel-header.sky-shell-header .travel-account{padding:9px 10px!important;font-size:12px!important;}
+ .travel-header.sky-shell-header .mobile-menu-toggle{width:36px!important;height:36px!important;flex-basis:36px!important;top:-3px!important;}
+ .travel-header.sky-shell-header .travel-nav.is-open{margin-top:0!important;padding-top:5px!important;padding-bottom:8px!important;}
+}
