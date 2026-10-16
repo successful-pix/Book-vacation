@@ -29,6 +29,8 @@ const PHRASES:Record<Exclude<Language,"en">,Dictionary>={
  ar:{"Explore the world, one trip at a time":"اكتشف العالم، رحلة بعد أخرى","Book your next escape":"احجز رحلتك القادمة","Where will you go next?":"إلى أين ستذهب بعد ذلك؟","Your next adventure starts here":"مغامرتك القادمة تبدأ هنا","Find your perfect flight":"اعثر على رحلة الطيران المناسبة","Plan your next holiday":"خطط لعطلتك القادمة","Your trip, your way":"رحلتك بطريقتك","Search flights and stays":"ابحث عن الرحلات وأماكن الإقامة","Compare options and choose what works for you.":"قارن الخيارات واختر ما يناسبك.","Your request has been received.":"تم استلام طلبك.","Please enter your details below.":"يرجى إدخال بياناتك أدناه.","No booking found":"لم يتم العثور على حجز","Check your booking details and try again.":"تحقق من تفاصيل الحجز وحاول مرة أخرى.","Payment is awaiting confirmation.":"الدفع بانتظار التأكيد.","Your receipt has been submitted for review.":"تم إرسال الإيصال للمراجعة.","Payment has been confirmed.":"تم تأكيد الدفع."}
 };
 function currentLanguage():Language{try{const value=localStorage.getItem("book-vacation-language")||"en";return LANGUAGES.includes(value as Language)?value as Language:"en"}catch{return "en"}}
+const originalTextNodes = new WeakMap<Node,string>();
+const originalAttributes = new WeakMap<HTMLElement,Map<string,string>>();
 function translateText(value:string,language:Language):string{
  if(language==="en")return value;
  const trimmed=value.trim();if(!trimmed)return value;
@@ -51,8 +53,8 @@ function applyLocalLanguage(language:Language){
  document.body.classList.toggle("book-vacation-rtl",language==="ar");
  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode(node){const parent=node.parentElement;if(!parent||parent.closest("script,style,noscript,textarea,input,select,option,code,pre,[contenteditable=true],[data-no-translate]"))return NodeFilter.FILTER_REJECT;return NodeFilter.FILTER_ACCEPT}});
  let node:Node|null;
- while((node=walker.nextNode())){const text=node.nodeValue;if(text)node.nodeValue=translateText(text,language)}
- document.querySelectorAll<HTMLElement>("[placeholder],[aria-label],[title]").forEach(el=>{for(const attr of ["placeholder","aria-label","title"]){const value=el.getAttribute(attr);if(value)el.setAttribute(attr,translateText(value,language))}});
+ while((node=walker.nextNode())){const text=node.nodeValue;if(text!==null){const original=originalTextNodes.get(node)??text;originalTextNodes.set(node,original);node.nodeValue=translateText(original,language)}}
+ document.querySelectorAll<HTMLElement>("[placeholder],[aria-label],[title]").forEach(el=>{let originals=originalAttributes.get(el);if(!originals){originals=new Map<string,string>();originalAttributes.set(el,originals)}for(const attr of ["placeholder","aria-label","title"]){const value=el.getAttribute(attr);if(value!==null){if(!originals.has(attr))originals.set(attr,value);const original=originals.get(attr)!;el.setAttribute(attr,translateText(original,language))}}});
 }
 export default function SiteTranslation(){
  useEffect(()=>{
