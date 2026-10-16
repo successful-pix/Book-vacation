@@ -3,10 +3,10 @@ import "./globals.css";
 import { CurrencyProvider } from "./components/CurrencyProvider";
 
 export const metadata: Metadata = {
-  title: "BookRide — Private Driver Service",
-  description: "Arrange private rides directly with your driver. Request a trip, confirm the fare personally and pay directly.",
-  applicationName: "BookRide",
-  appleWebApp: { capable: true, statusBarStyle: "default", title: "BookRide" },
+  title: "Book Vacation — Flights, Stays & Holidays",
+  description: "Discover flights, stays and holiday travel options around the world with Book Vacation.",
+  applicationName: "Book Vacation",
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "Book Vacation" },
   formatDetection: { telephone: false },
 };
 
