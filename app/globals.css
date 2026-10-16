@@ -119,3 +119,42 @@
  .flight-search-form .flight-input:nth-of-type(6){grid-column:1/2}
  .flight-search-form .flight-input:nth-of-type(7){grid-column:2/4}
 }
+
+/* Book Vacation blue travel identity */
+:root{--ink:#132b4a;--muted:#63758d;--teal:#0066cc;--mint:#eaf3ff;--cream:#f4f8ff;--line:#dce7f5;--orange:#ffb547}
+.travel-topbar{background:#063b80;color:#fff}
+.travel-header{border-bottom:1px solid #dce7f5;background:rgba(255,255,255,.98)}
+.travel-brand-mark{background:#0066cc!important;color:#fff!important}
+.brand-dot,.travel-kicker,.eyebrow{color:#0066cc}
+.travel-nav a:hover,.travel-footer a:hover,.breadcrumbs a:hover{color:#0066cc}
+.travel-account,.travel-search-button,.nav-cta,.btn{background:#0066cc!important;color:#fff!important}
+.travel-account:hover,.travel-search-button:hover,.nav-cta:hover,.btn:hover{background:#0054aa!important}
+.travel-page-hero{background:linear-gradient(130deg,#f1f7ff 0%,#e7f1ff 55%,#f8fbff 100%)}
+.flight-hero,.stays-hero{background:linear-gradient(135deg,#f1f7ff 0%,#e5f0ff 58%,#f8fbff 100%)}
+.flight-search-panel,.flight-request-card,.stay-search,.supplier-notice{border-color:#cfe0f5}
+.trip-modes input,.flight-search-form input:focus,.flight-search-form select:focus,.stay-search input:focus,.stay-search select:focus{accent-color:#0066cc;outline-color:#7eb8ff}
+.travel-footer{background:#092e5e;color:#eaf3ff}
+.travel-footer .travel-brand,.travel-footer .travel-brand-mark{color:#fff}
+.travel-footer-bottom{border-color:rgba(255,255,255,.16)}
+.mobile-bottom-nav{border-top-color:#dce7f5}
+.mobile-bottom-nav a:hover,.mobile-bottom-nav a:focus{color:#0066cc}
+.account-mark,.feature-icon,.flight-request-icon,.success-mark{background:#eaf3ff;color:#0066cc}
+.account-tabs button.active,.chip.active{background:#eaf3ff!important;color:#0054aa!important;border-color:#9ec8fa!important}
+.request-status{background:#eaf3ff;color:#0054aa}
+.location-autocomplete{position:relative;min-width:0;width:100%}
+.location-input-wrap{position:relative;width:100%}
+.location-input-wrap>input{width:100%;padding-right:39px}
+.location-input-icon{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#0066cc;pointer-events:none;display:flex}
+.location-suggestions{position:absolute;z-index:80;top:calc(100% + 7px);left:0;right:0;background:#fff;border:1px solid #cbdcf1;border-radius:14px;box-shadow:0 16px 44px rgba(19,43,74,.16);padding:6px;max-height:310px;overflow-y:auto}
+.location-suggestions button{width:100%;display:flex;align-items:center;gap:11px;text-align:left;background:#fff;color:#132b4a;border:0;border-radius:9px;padding:10px;cursor:pointer}
+.location-suggestions button:hover,.location-suggestions button:focus{background:#edf5ff;outline:0}
+.location-suggestions button>span:nth-child(2){min-width:0;display:grid;gap:3px}
+.location-suggestions strong{font-size:13px;line-height:1.35;font-weight:700;overflow-wrap:anywhere}
+.location-suggestions small,.location-powered{font-size:10px;color:#63758d}
+.location-suggestion-icon{color:#0066cc;display:flex;flex:0 0 22px}
+.location-suggestions>p{font-size:12px;color:#63758d;padding:8px 10px;margin:0}
+.location-powered{border-top:1px solid #edf1f7;padding:8px 7px 4px;margin-top:4px}
+.current-location{display:inline-flex;align-items:center;gap:5px;font-size:11px;white-space:nowrap;color:inherit}
+.spin-icon{animation:location-spin .9s linear infinite}@keyframes location-spin{to{transform:rotate(360deg)}}
+.topbar-right{display:flex;align-items:center;gap:12px}
+@media(max-width:760px){.topbar-right{gap:7px;flex-wrap:wrap;justify-content:center}.current-location{max-width:100%;overflow:hidden;text-overflow:ellipsis}}
