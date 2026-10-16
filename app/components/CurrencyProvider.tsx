@@ -1,11 +1,9 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
-export const CURRENCIES = [
-  ["USD","US dollar"],["NGN","Nigerian naira"],["GBP","British pound"],["EUR","Euro"],
-  ["GHS","Ghanaian cedi"],["KES","Kenyan shilling"],["ZAR","South African rand"],
-  ["INR","Indian rupee"],["CAD","Canadian dollar"],["AUD","Australian dollar"],["BRL","Brazilian real"]
-] as const;
+const CURRENCY_CODES="AED AFN ALL AMD ANG AOA ARS AUD AWG AZN BAM BBD BDT BGN BHD BIF BMD BND BOB BRL BSD BTN BWP BYN BZD CAD CDF CHF CLP CNY COP CRC CUP CVE CZK DJF DKK DOP DZD EGP ERN ETB EUR FJD GBP GEL GHS GMD GNF GTQ GYD HKD HNL HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KGS KHR KMF KRW KWD KYD KZT LAK LBP LKR LRD LSL LYD MAD MDL MGA MKD MMK MNT MOP MRU MUR MVR MWK MXN MYR MZN NAD NGN NPR NZD OMR PAB PEN PGK PHP PKR PLN QAR RON RSD RUB RWF SAR SBD SCR SDG SEK SGD SHP SLE SOS SRD SSP STN SYP SZL THB TJS TMT TND TOP TRY TTD TWD TZS UAH UGX USD UYU UZS VES VND VUV WST XAF XCD XOF XPF YER ZAR ZMW ZWG".split(" ");
+const currencyNames=new Intl.DisplayNames(["en"],{type:"currency"});
+export const CURRENCIES=CURRENCY_CODES.map(code=>[code,currencyNames.of(code)||code] as const).sort((a,b)=>a[0]==="USD"?-1:b[0]==="USD"?1:a[1].localeCompare(b[1]));
 type CurrencyContextValue={currency:string;setCurrency:(currency:string)=>void;rates:Record<string,number>;ratesReady:boolean;toUSD:(amount:number,sourceCurrency?:string)=>number|null;formatUSD:(amount:number)=>string;formatLocal:(amount:number)=>string;localCurrency:string};
 const CurrencyContext=createContext<CurrencyContextValue|null>(null);
 const money=(amount:number,currency:string)=>new Intl.NumberFormat(undefined,{style:"currency",currency,maximumFractionDigits:currency==="NGN"||currency==="GHS"||currency==="KES"?0:2}).format(amount);
