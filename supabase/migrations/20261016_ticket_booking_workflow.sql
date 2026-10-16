@@ -102,3 +102,8 @@ create policy "Ticket guests upload own receipt" on storage.objects for insert t
  with check (bucket_id='ticket-payment-receipts' and exists(select 1 from public.ticket_requests t where t.id::text=(storage.foldername(name))[1] and t.guest_access_token::text=nullif((current_setting('request.headers',true)::jsonb ->> 'x-ticket-access-token'),'')));
 drop policy if exists "Ticket authorised view receipts" on storage.objects;
 create policy "Ticket authorised view receipts" on storage.objects for select to authenticated using (bucket_id='ticket-payment-receipts' and public.is_book_vacation_admin());
+
+-- Explicit Data API privileges; RLS above remains the row-level gate.
+grant select, insert on public.ticket_requests to anon, authenticated;
+grant update on public.ticket_requests to authenticated;
+grant select, insert, update on public.ticket_payment_receipts to anon, authenticated;
