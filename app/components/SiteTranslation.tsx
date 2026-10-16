@@ -1,5 +1,6 @@
 "use client";
 import {useEffect} from "react";
+import {usePathname} from "next/navigation";
 declare global {
  interface Window {
   google?: {translate?:{TranslateElement:new(options:Record<string,unknown>,element:string)=>unknown}};
@@ -11,6 +12,15 @@ function selectedLanguage(){
  try{const value=localStorage.getItem("book-vacation-language")||"en";return LANGUAGES.includes(value)?value:"en"}catch{return "en"}
 }
 export default function SiteTranslation(){
+ const pathname=usePathname();
+ useEffect(()=>{
+  try{
+   const language=localStorage.getItem("book-vacation-language")||"en";
+   const previous=sessionStorage.getItem("book-vacation-translated-path");
+   if(language!=="en"&&previous&&previous!==pathname){sessionStorage.setItem("book-vacation-translated-path",pathname);window.location.reload();return}
+   sessionStorage.setItem("book-vacation-translated-path",pathname);
+  }catch{}
+ },[pathname]);
  useEffect(()=>{
   let timer:ReturnType<typeof setInterval>|undefined;
   const apply=()=>{
