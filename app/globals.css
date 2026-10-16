@@ -932,3 +932,7 @@ html[data-display-scale="75"]{font-size:75%}html[data-display-scale="80"]{font-s
  .travel-header.sky-shell-header .mobile-menu-toggle{width:36px!important;height:36px!important;flex-basis:36px!important;top:-3px!important;}
  .travel-header.sky-shell-header .travel-nav.is-open{margin-top:0!important;padding-top:5px!important;padding-bottom:8px!important;}
 }
+
+
+/* Support contact details */
+.support-email-inline{color:#176d5c;font-weight:800;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}.support-contact-card{display:flex;align-items:flex-start;gap:13px;margin-top:22px;padding:20px;border:1px solid #dce9e0;border-radius:16px;background:#f7faf7;color:#176d5c}.support-contact-card>svg{flex:0 0 auto;margin-top:3px}.support-contact-card strong{display:block;color:#173b31;font-size:15px}.support-contact-card p{margin:7px 0 14px;color:#61756c;line-height:1.7;font-size:13px}.support-contact-card p a{color:#176d5c;font-weight:800;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}.support-email-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 15px;border-radius:999px;background:#176d5c;color:#fff!important;font-size:12px;font-weight:800}
