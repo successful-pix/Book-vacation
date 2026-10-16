@@ -955,3 +955,5 @@ input::selection,textarea::selection{background:#b9d9ff;color:#082c55}
 .travel-footer.sky-shell-footer .footer-trust{color:#8fe5c1!important}
 .travel-footer.sky-shell-footer .travel-brand small{color:#b6d9ff!important}
 @media(max-width:600px){.travel-footer.sky-shell-footer{padding:28px 0 18px!important}.travel-footer.sky-shell-footer .travel-footer-grid{gap:18px!important}.travel-footer.sky-shell-footer .travel-footer-grid>div{gap:10px!important}}
+
+/* Social preview, currency cleanup, and readability fixes finalized. */
