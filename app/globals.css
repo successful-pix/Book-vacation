@@ -821,3 +821,23 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 /* Keep the full-page translation helper invisible without suppressing translated page text. */
 #book-vacation-translate,.goog-te-banner-frame.skiptranslate,.goog-te-gadget { position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important; }
 body { top:0!important; }
+
+/* Responsive dashboard and header control fixes */
+html{font-size:85%}
+html[data-display-scale="75"]{font-size:75%}html[data-display-scale="80"]{font-size:80%}html[data-display-scale="85"]{font-size:85%}html[data-display-scale="90"]{font-size:90%}html[data-display-scale="100"]{font-size:100%}html[data-display-scale="110"]{font-size:110%}html[data-display-scale="125"]{font-size:125%}
+.travel-topbar.sky-shell-topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;overflow:visible}
+.travel-topbar.sky-shell-topbar .topbar-right{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0;overflow:visible}
+.travel-topbar.sky-shell-topbar .currency-picker,.travel-topbar.sky-shell-topbar .shell-language{display:inline-flex;align-items:center;gap:5px;min-width:0;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;position:relative;z-index:1005}
+.travel-topbar.sky-shell-topbar .currency-picker select,.travel-topbar.sky-shell-topbar .shell-language select{display:block;min-height:34px;min-width:78px;max-width:150px;width:auto;padding:5px 22px 5px 8px!important;border:1px solid #d2dfec!important;border-radius:8px!important;background:#fff!important;color:#173653!important;box-shadow:none!important;position:relative;z-index:1006;opacity:1}
+.travel-topbar.sky-shell-topbar .currency-picker select option,.travel-topbar.sky-shell-topbar .shell-language select option{background:#fff!important;color:#173653!important}
+.travel-header.sky-shell-header{position:relative;z-index:50;overflow:visible}
+.bv-account-page{padding:28px 0 56px!important}.bv-account-layout{width:min(1160px,calc(100% - 40px))!important}.bv-dashboard{gap:22px!important}
+.bv-dashboard-welcome h1{font-size:clamp(26px,3.2vw,40px)!important;line-height:1.25!important;letter-spacing:-.03em!important;margin:14px 0!important;overflow-wrap:anywhere}
+.bv-dashboard-welcome p,.bv-dashboard-actions>a>small,.bv-request-main small{line-height:1.7!important}
+.bv-dashboard-stats{gap:14px!important}.bv-dashboard-stats article{min-height:92px;padding:16px!important}
+.bv-dashboard-actions{gap:14px!important}.bv-dashboard-actions>a{min-height:175px;padding:20px!important;gap:12px!important}
+.bv-dashboard-columns{gap:18px!important}.bv-dashboard-panel,.bv-preferences-panel{padding:clamp(17px,2.3vw,26px)!important}
+.bv-request-row{gap:12px!important;padding:15px 0!important}.bv-request-main{gap:7px!important}.bv-preferences-panel{gap:20px!important}
+#book-vacation-translate{position:fixed!important;left:-10000px!important;top:0!important;width:1px!important;height:1px!important;overflow:hidden!important;pointer-events:none!important}
+.goog-te-banner-frame.skiptranslate,.goog-te-menu-frame,.goog-te-balloon-frame{display:none!important}body{top:0!important}
+@media(max-width:600px){.travel-topbar.sky-shell-topbar{gap:7px;padding:8px 12px}.travel-topbar.sky-shell-topbar>span:first-child{flex-basis:100%;font-size:11px}.travel-topbar.sky-shell-topbar .topbar-right{width:100%;justify-content:space-between;gap:6px}.travel-topbar.sky-shell-topbar .currency-picker select{min-width:78px;max-width:112px;font-size:12px}.travel-topbar.sky-shell-topbar .shell-language select{min-width:75px;max-width:100px;font-size:12px}.bv-account-page{padding:20px 0 40px!important}.bv-account-layout{width:calc(100% - 24px)!important}.bv-dashboard{gap:16px!important}.bv-dashboard-welcome{padding:20px 16px!important;gap:12px}.bv-dashboard-welcome h1{font-size:25px!important}.bv-dashboard-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}.bv-dashboard-stats article{min-height:82px;padding:12px!important}.bv-dashboard-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}.bv-dashboard-actions>a{min-height:160px;padding:14px 12px!important}.bv-dashboard-columns{grid-template-columns:minmax(0,1fr)!important;gap:13px!important}.bv-preferences-panel{grid-template-columns:minmax(0,1fr)!important;gap:16px!important}.bv-request-row{display:grid!important;grid-template-columns:36px minmax(0,1fr);align-items:start!important}.request-status{grid-column:2;justify-self:start;margin-left:0!important}}
