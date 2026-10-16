@@ -61,8 +61,8 @@ function applyLocalLanguage(language:Language){
  document.body.classList.toggle("book-vacation-rtl",language==="ar");
  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode(node){const parent=node.parentElement;if(!parent||parent.closest("script,style,noscript,textarea,input,select,option,code,pre,[contenteditable=true],[data-no-translate]"))return NodeFilter.FILTER_REJECT;return NodeFilter.FILTER_ACCEPT}});
  let node:Node|null;
- while((node=walker.nextNode())){const text=node.nodeValue;if(text!==null){const original=originalTextNodes.get(node)??text;originalTextNodes.set(node,original);node.nodeValue=translateText(original,language)}}
- document.querySelectorAll<HTMLElement>("[placeholder],[aria-label],[title]").forEach(el=>{let originals=originalAttributes.get(el);if(!originals){originals=new Map<string,string>();originalAttributes.set(el,originals)}for(const attr of ["placeholder","aria-label","title"]){const value=el.getAttribute(attr);if(value!==null){if(!originals.has(attr))originals.set(attr,value);const original=originals.get(attr)!;el.setAttribute(attr,translateText(original,language))}}});
+ while((node=walker.nextNode())){const text=node.nodeValue;if(text!==null){const original=originalTextNodes.get(node)??text;originalTextNodes.set(node,original);const translated=translateText(original,language);if(text!==translated)node.nodeValue=translated}}
+ document.querySelectorAll<HTMLElement>("[placeholder],[aria-label],[title]").forEach(el=>{let originals=originalAttributes.get(el);if(!originals){originals=new Map<string,string>();originalAttributes.set(el,originals)}for(const attr of ["placeholder","aria-label","title"]){const value=el.getAttribute(attr);if(value!==null){if(!originals.has(attr))originals.set(attr,value);const original=originals.get(attr)!;const translated=translateText(original,language);if(value!==translated)el.setAttribute(attr,translated)}}});
 }
 export default function SiteTranslation(){
  useEffect(()=>{
