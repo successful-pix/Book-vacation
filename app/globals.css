@@ -817,3 +817,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
  .currency-picker select { max-width:130px; }
  .current-location { max-width:155px;overflow:hidden; }
 }
+
+/* Keep the full-page translation helper invisible without suppressing translated page text. */
+#book-vacation-translate,.goog-te-banner-frame.skiptranslate,.goog-te-gadget { position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important; }
+body { top:0!important; }
