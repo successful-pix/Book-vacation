@@ -3,12 +3,19 @@ import {useEffect} from "react";
 
 export default function DisplayScale(){
   useEffect(()=>{
-    try {
-      const scale=localStorage.getItem("book-vacation-display-scale")||"85";
-      document.documentElement.style.zoom=String(Number(scale)/100);
-    } catch {
-      document.documentElement.style.zoom="0.85";
-    }
+    const apply=()=>{
+      let scale="85";
+      try { scale=localStorage.getItem("book-vacation-display-scale")||"85"; } catch {}
+      const value=Number(scale);
+      const safe=Number.isFinite(value)&&value>=70&&value<=125?value:85;
+      // Font scaling preserves responsive breakpoints and avoids zoom-induced overlaps.
+      document.documentElement.style.zoom="";
+      document.documentElement.style.fontSize=safe+"%";
+      document.documentElement.dataset.displayScale=String(safe);
+    };
+    apply();
+    window.addEventListener("storage",apply);
+    return ()=>window.removeEventListener("storage",apply);
   },[]);
   return null;
 }
