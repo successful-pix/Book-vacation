@@ -59,6 +59,7 @@ export default function SiteTranslation(){
   let active=true;let observer:MutationObserver|undefined;let scheduled=false;let lastLanguage:Language="en";
   const apply=()=>{if(!active)return;const language=currentLanguage();lastLanguage=language;applyLocalLanguage(language)};
   const schedule=()=>{if(scheduled)return;scheduled=true;queueMicrotask(()=>{scheduled=false;if(active){const language=currentLanguage();if(language!==lastLanguage)apply();else applyLocalLanguage(language)}})};
+  try{document.cookie="googtrans=;path=/;max-age=0";document.cookie="googtrans=;path=/;domain="+location.hostname+";max-age=0"}catch{}
   apply();
   observer=new MutationObserver(schedule);observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:["placeholder","aria-label","title"]});
   const onLanguage=(event:Event)=>{const value=(event as CustomEvent<string>).detail;if(LANGUAGES.includes(value as Language))localStorage.setItem("book-vacation-language",value);apply()};
