@@ -1,5 +1,6 @@
 "use client";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
+import type { FormEvent } from "react";
 import { CarFront, MapPin, CalendarDays, Clock3, Users, Luggage, ShieldCheck, CheckCircle2, ArrowRight, Phone, Route, WalletCards } from "lucide-react";
 import { supabase } from "./lib/supabase";
 
