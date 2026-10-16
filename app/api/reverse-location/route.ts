@@ -1,0 +1,7 @@
+import { NextResponse } from "next/server";
+export const revalidate=0;
+export async function GET(request:Request){
+ const u=new URL(request.url);const lat=Number(u.searchParams.get("lat"));const lon=Number(u.searchParams.get("lon"));
+ if(!Number.isFinite(lat)||!Number.isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180)return NextResponse.json({error:"Valid coordinates are required."},{status:400});
+ try{const url=new URL("https://nominatim.openstreetmap.org/reverse");url.searchParams.set("format","jsonv2");url.searchParams.set("lat",String(lat));url.searchParams.set("lon",String(lon));url.searchParams.set("zoom","10");url.searchParams.set("addressdetails","1");const r=await fetch(url,{headers:{"User-Agent":"BookVacation/1.0 (location display)"},next:{revalidate:3600}});if(!r.ok)throw new Error("reverse lookup failed");const data=await r.json();const a=data.address||{};const city=a.city||a.town||a.village||a.municipality||a.suburb||a.county||a.state||"";return NextResponse.json({city,country:a.country||"",countryCode:(a.country_code||"").toUpperCase(),label:[city,a.country].filter(Boolean).join(", ")||data.display_name||"Current location"})}catch{return NextResponse.json({error:"Could not identify this location right now."},{status:502})}
+}
