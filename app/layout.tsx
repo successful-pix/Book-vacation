@@ -3,6 +3,7 @@ import "./globals.css";
 import { CurrencyProvider } from "./components/CurrencyProvider";
 import DisplayScale from "./components/DisplayScale";
 import SiteTranslation from "./components/SiteTranslation";
+import NoCopy from "./components/NoCopy";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://book-vacation.vercel.app"),
@@ -16,5 +17,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><DisplayScale/><SiteTranslation/><CurrencyProvider>{children}</CurrencyProvider></body></html>;
+  return <html lang="en"><body><NoCopy/><DisplayScale/><SiteTranslation/><CurrencyProvider>{children}</CurrencyProvider></body></html>;
 }
