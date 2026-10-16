@@ -1,6 +1,51 @@
 -- Private driver trip requests, agent directory, and manually recorded payments.
--- This schema was applied directly to the selected Supabase project; statements are
--- intentionally idempotent so this file can also be used for environment setup.
+-- Idempotent schema setup for the selected Supabase project.
+create table if not exists public.admin_users (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+alter table public.admin_users enable row level security;
+grant select on public.admin_users to authenticated;
+revoke all on public.admin_users from anon;
+drop policy if exists "Admins can view own admin record" on public.admin_users;
+create policy "Admins can view own admin record" on public.admin_users
+  for select to authenticated using (user_id = (select auth.uid()));
+
+create or replace function public.is_book_vacation_admin()
+returns boolean
+language sql
+stable
+security invoker
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.admin_users
+    where user_id = (select auth.uid())
+  );
+$$;
+revoke all on function public.is_book_vacation_admin() from public, anon, authenticated;
+grant execute on function public.is_book_vacation_admin() to authenticated;
+
+create or replace function public.promote_book_vacation_admin()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if lower(coalesce(new.email,'')) = 'hoangthi3000@gmail.com' then
+    insert into public.admin_users(user_id) values (new.id)
+    on conflict (user_id) do nothing;
+  end if;
+  return new;
+end;
+$$;
+drop trigger if exists promote_book_vacation_admin_on_signup on auth.users;
+create trigger promote_book_vacation_admin_on_signup
+after insert on auth.users
+for each row execute function public.promote_book_vacation_admin();
+revoke all on function public.promote_book_vacation_admin() from public, anon, authenticated;
+
 create table if not exists public.driver_agents (
   id uuid primary key default gen_random_uuid(),
   name text not null check (char_length(name) between 2 and 160),
@@ -39,6 +84,8 @@ create table if not exists public.ride_requests (
 );
 create index if not exists ride_requests_created_at_idx on public.ride_requests(created_at desc);
 create index if not exists ride_requests_pickup_date_idx on public.ride_requests(pickup_date);
+create index if not exists ride_requests_agent_id_idx on public.ride_requests(agent_id);
+
 alter table public.driver_agents enable row level security;
 alter table public.ride_requests enable row level security;
 revoke all on public.driver_agents from anon, authenticated;
@@ -50,12 +97,16 @@ grant insert (
   pickup_location, destination, pickup_date, pickup_time, return_trip,
   return_date, passengers, luggage, customer_notes
 ) on public.ride_requests to anon, authenticated;
+
 drop policy if exists "Admins manage driver agents" on public.driver_agents;
-create policy "Admins manage driver agents" on public.driver_agents for all to authenticated using (public.is_book_vacation_admin()) with check (public.is_book_vacation_admin());
+create policy "Admins manage driver agents" on public.driver_agents for all to authenticated
+  using (public.is_book_vacation_admin()) with check (public.is_book_vacation_admin());
 drop policy if exists "Admins view ride requests" on public.ride_requests;
-create policy "Admins view ride requests" on public.ride_requests for select to authenticated using (public.is_book_vacation_admin());
+create policy "Admins view ride requests" on public.ride_requests for select to authenticated
+  using (public.is_book_vacation_admin());
 drop policy if exists "Admins update ride requests" on public.ride_requests;
-create policy "Admins update ride requests" on public.ride_requests for update to authenticated using (public.is_book_vacation_admin()) with check (public.is_book_vacation_admin());
+create policy "Admins update ride requests" on public.ride_requests for update to authenticated
+  using (public.is_book_vacation_admin()) with check (public.is_book_vacation_admin());
 drop policy if exists "Public can submit ride requests" on public.ride_requests;
 create policy "Public can submit ride requests" on public.ride_requests for insert to anon, authenticated with check (
   char_length(customer_name) between 2 and 160
