@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { CurrencyProvider } from "./components/CurrencyProvider";
 
 export const metadata: Metadata = {
   title: "BookRide — Private Driver Service",
@@ -11,5 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><CurrencyProvider>{children}</CurrencyProvider></body></html>;
+  return <html lang="en"><body>{children}</body></html>;
 }
