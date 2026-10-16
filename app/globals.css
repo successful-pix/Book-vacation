@@ -731,3 +731,89 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 @media(max-width:1080px){.travel-nav{gap:12px}.travel-nav a{font-size:12px}.bv-hero-inner{grid-template-columns:minmax(0,1fr) minmax(440px,1.1fr);gap:24px}.bv-destination-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bv-dashboard-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.bv-dashboard-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:780px){.travel-topbar{align-items:flex-start;flex-direction:column;padding:8px 16px;gap:8px}.topbar-right{justify-content:flex-start;width:100%;gap:10px}.current-location{font-size:11px}.travel-header-inner{min-height:68px}.travel-nav{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border-bottom:1px solid var(--bv-border);padding:15px 20px;box-shadow:0 15px 30px #163b6514;align-items:stretch;flex-direction:column;gap:0}.travel-nav.is-open{display:flex}.travel-nav a{padding:12px 4px;border-bottom:1px solid #edf2f8;font-size:14px}.travel-header-actions .support-link{display:none}.bv-hero{padding:38px 0 28px}.bv-hero-inner{grid-template-columns:1fr;gap:18px}.bv-hero-copy{padding:0 0 5px}.bv-hero h1{font-size:clamp(34px,8vw,48px)}.bv-search-card{padding:13px}.bv-shortcuts{grid-template-columns:1fr;margin-top:16px}.bv-shortcuts>a{padding:13px}.bv-destinations{padding-top:50px;padding-bottom:50px}.bv-section-heading{align-items:flex-start;flex-direction:column;gap:12px}.bv-why{padding:48px 0}.bv-why-grid{grid-template-columns:1fr;gap:32px}.bv-why-photo{height:310px}.bv-final-cta{margin-top:40px;margin-bottom:45px;padding:28px 23px;align-items:flex-start;flex-direction:column}.bv-account-page{padding:28px 0 60px}.bv-dashboard-columns{grid-template-columns:1fr}.bv-preferences-panel{grid-template-columns:1fr}.bv-dashboard-stats{margin-bottom:30px}}
 @media(max-width:520px){.travel-header-inner{width:calc(100% - 26px);gap:10px}.travel-brand{font-size:16px;min-width:0}.travel-brand-mark{width:32px;height:32px}.travel-brand small{font-size:8px}.travel-account{padding:10px 11px;font-size:12px}.travel-account svg:last-child{display:none}.bv-hero h1{letter-spacing:-1.4px}.bv-hero-copy>p{font-size:14px}.bv-hero-points{gap:10px;font-size:11px}.bv-search-card .flight-search-form{grid-template-columns:1fr}.bv-search-card .travel-search-button{grid-column:auto}.bv-search-tabs{gap:2px}.bv-search-tabs a,.bv-search-tabs span{padding:9px 8px;font-size:11px}.bv-destination-grid{grid-template-columns:1fr}.bv-destination-photo{height:235px}.bv-destination-body p{min-height:0}.bv-why-photo{height:260px}.bv-final-cta>div:last-child{align-items:flex-start;flex-direction:column;gap:13px}.bv-dashboard-welcome{align-items:flex-start}.bv-dashboard-avatar{flex-basis:48px;width:48px;height:48px;border-radius:14px}.bv-dashboard-avatar svg{width:23px}.bv-dashboard-welcome h1{font-size:27px}.bv-dashboard-welcome p{font-size:12px}.bv-dashboard-stats{gap:9px}.bv-dashboard-stats article{padding:11px;gap:9px}.bv-stat-icon{flex-basis:35px;width:35px;height:35px}.bv-dashboard-stats small{font-size:10px}.bv-dashboard-stats strong{font-size:19px}.bv-dashboard-actions{gap:9px}.bv-dashboard-actions>a{padding:13px}.bv-dashboard-actions small{min-height:0}.bv-dashboard-panel{padding:14px}.bv-panel-title{align-items:flex-start;flex-direction:column}.bv-request-row{align-items:flex-start;flex-wrap:wrap}.bv-request-status{margin-left:48px}.bv-preferences-panel{padding:16px}.bv-preferences-copy{gap:10px}.account-layout{width:calc(100% - 28px)}.travel-topbar{padding-left:14px;padding-right:14px}.topbar-right{gap:7px}.shell-language select,.currency-picker select{max-width:105px}}
+
+
+/* Book Vacation UI polish: keep controls above overlapping cards and preserve readable contrast. */
+:root { --bv-blue-900:#082c55; --bv-blue-800:#0d477f; --bv-blue-700:#1768ad; --bv-blue-100:#eaf4ff; --bv-ink:#102b45; --bv-muted:#52657a; }
+.travel-topbar { position:relative; z-index:1000; overflow:visible; }
+.topbar-right { position:relative; z-index:1001; overflow:visible; }
+.currency-picker,.shell-language { position:relative; z-index:1002; }
+.currency-picker select,.shell-language select,.account-label select { background:#fff !important; color:#102b45 !important; border:1px solid #d2dfec !important; opacity:1; position:relative; z-index:1003; min-height:40px; }
+.currency-picker select option,.shell-language select option,.account-label select option { background:#fff; color:#102b45; }
+.location-suggestions { z-index:1200 !important; }
+.travel-header,.travel-header-inner,.travel-nav,.travel-header-actions { min-width:0; }
+.travel-nav a,.travel-header-actions a { white-space:nowrap; }
+.bv-account-page { background:#f4f8fc; min-height:72vh; padding:36px 0 64px; color:#102b45; }
+.bv-account-layout { width:min(1180px,calc(100% - 40px)); max-width:1180px; margin:0 auto; }
+.bv-dashboard { width:100%; display:grid; gap:24px; }
+.bv-dashboard-welcome { background:linear-gradient(120deg,#082f5b,#1768ad); color:#fff; border-radius:22px; padding:clamp(24px,4vw,42px); display:flex; justify-content:space-between; align-items:center; gap:22px; box-shadow:0 14px 36px #0c37601c; }
+.bv-dashboard-welcome h1 { font-size:clamp(27px,3.4vw,42px); line-height:1.15; letter-spacing:-.8px; margin:12px 0; overflow-wrap:anywhere; }
+.bv-dashboard-welcome p { color:#e8f3ff; max-width:680px; line-height:1.7; margin:0; }
+.bv-dashboard-welcome .travel-kicker { color:#cce6ff; }
+.bv-dashboard-avatar { width:60px;height:60px;flex:0 0 60px;border-radius:18px;display:grid;place-items:center;background:#ffffff20;color:#fff; }
+.bv-dashboard-stats { display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px; }
+.bv-dashboard-stats article { min-width:0;display:flex;align-items:center;gap:13px;background:#fff;border:1px solid #e0e9f2;border-radius:16px;padding:18px;box-shadow:0 5px 18px #163d6108; }
+.bv-stat-icon,.bv-action-icon { flex:0 0 auto;background:#eaf4ff;color:#1768ad;border-radius:12px;width:42px;height:42px;display:grid;place-items:center; }
+.bv-dashboard-stats small { display:block;color:#60748a;font-size:12px;line-height:1.45; }
+.bv-dashboard-stats strong { display:block;color:#102b45;font-size:clamp(17px,2vw,23px);margin-top:5px;overflow-wrap:anywhere; }
+.bv-dashboard-section-head h2,.bv-panel-title h2,.bv-preferences-copy h2 { color:#102b45;letter-spacing:-.4px;line-height:1.25;margin:7px 0 0;font-size:clamp(20px,2.4vw,27px); }
+.bv-dashboard-actions { display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px; }
+.bv-dashboard-actions>a { display:flex;flex-direction:column;align-items:flex-start;gap:10px;min-width:0;background:#fff;border:1px solid #e0e9f2;border-radius:17px;padding:20px;color:#102b45;box-shadow:0 5px 18px #163d6108;transition:transform .18s,border-color .18s,box-shadow .18s; }
+.bv-dashboard-actions>a:hover { transform:translateY(-2px);border-color:#9fc8ee;box-shadow:0 12px 25px #163d6110; }
+.bv-dashboard-actions>a>strong { font-size:16px;line-height:1.35; }
+.bv-dashboard-actions>a>small { font-size:13px;color:#60748a;line-height:1.55; }
+.bv-action-link { display:flex;align-items:center;gap:6px;color:#1768ad;font-size:13px;font-weight:700;margin-top:auto;padding-top:4px; }
+.bv-dashboard-columns { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:stretch; }
+.bv-dashboard-panel,.bv-preferences-panel { min-width:0;background:#fff;border:1px solid #e0e9f2;border-radius:18px;padding:clamp(18px,2.5vw,26px);box-shadow:0 5px 18px #163d6108; }
+.bv-panel-title { display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px; }
+.bv-panel-title>a,.bv-dashboard-bottom-links a { color:#1768ad;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:6px; }
+.bv-request-row { display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px solid #edf2f7;min-width:0; }
+.bv-request-main { flex:1;min-width:0;display:grid;gap:6px; }
+.bv-request-main strong { display:flex;align-items:center;gap:5px;flex-wrap:wrap;overflow-wrap:anywhere;color:#102b45;font-size:14px; }
+.bv-request-main small { color:#60748a;font-size:12px;line-height:1.5;overflow-wrap:anywhere; }
+.bv-request-icon { width:38px;height:38px;flex:0 0 38px;border-radius:11px;background:#eaf4ff;color:#1768ad;display:grid;place-items:center; }
+.request-status { max-width:110px;white-space:normal;overflow-wrap:anywhere;text-align:center;font-size:11px;padding:6px 9px;border-radius:999px;background:#edf5ff;color:#17578e; }
+.bv-empty-state { display:grid;justify-items:start;gap:9px;padding:22px 0 4px;color:#1768ad; }
+.bv-empty-state strong { color:#102b45; }
+.bv-empty-state p { color:#60748a;font-size:13px;line-height:1.6;margin:0; }
+.bv-empty-state a { display:inline-flex;align-items:center;gap:6px;color:#1768ad;font-size:13px;font-weight:700; }
+.bv-preferences-panel { display:grid;grid-template-columns:minmax(0,1.3fr) minmax(220px,.7fr);gap:24px;align-items:start; }
+.bv-preferences-copy { display:flex;gap:14px;min-width:0; }
+.bv-preferences-copy>div { min-width:0; }
+.bv-preferences-copy p { color:#60748a;font-size:13px;line-height:1.65;margin:12px 0 0;display:flex;gap:7px;align-items:flex-start; }
+.bv-preferences-controls { display:grid;gap:12px;min-width:0; }
+.bv-scale-setting { margin-top:10px;max-width:230px; }
+.bv-preferences-controls button,.travel-search-button { min-height:44px; }
+.bv-dashboard-bottom-links { display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:2px 2px 0; }
+.account-card,.account-intro { min-width:0; }
+.password-field-wrap { display:flex;align-items:center;position:relative;width:100%; }
+.password-field-wrap input { width:100%;padding-right:100px !important; }
+.password-visibility { position:absolute;right:8px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;justify-content:center;gap:5px;border:0;border-radius:8px;background:#edf5ff;color:#15558e;padding:8px 10px;font-size:12px;font-weight:700;cursor:pointer;z-index:2; }
+.password-visibility:hover { background:#dbeeff; }
+.account-card input,.account-card select { min-height:46px; }
+.account-label { color:#263f58; }
+.account-success,.account-error { overflow-wrap:anywhere;line-height:1.55; }
+@media(max-width:900px) {
+ .bv-dashboard-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .bv-dashboard-actions { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .bv-dashboard-columns { grid-template-columns:1fr; }
+ .bv-preferences-panel { grid-template-columns:1fr; }
+}
+@media(max-width:560px) {
+ .bv-account-page { padding:20px 0 40px; }
+ .bv-account-layout { width:calc(100% - 24px); }
+ .bv-dashboard-welcome { border-radius:17px;padding:22px 18px;align-items:flex-start; }
+ .bv-dashboard-avatar { width:44px;height:44px;flex-basis:44px;border-radius:13px; }
+ .bv-dashboard-stats { gap:9px; }
+ .bv-dashboard-stats article { padding:13px 11px;gap:9px; }
+ .bv-stat-icon { width:34px;height:34px;border-radius:10px; }
+ .bv-dashboard-actions { gap:9px; }
+ .bv-dashboard-actions>a { padding:15px 13px; }
+ .bv-preferences-copy { gap:10px; }
+ .bv-dashboard-bottom-links { display:grid; }
+ .bv-panel-title { align-items:flex-start;flex-wrap:wrap; }
+ .bv-request-row { align-items:flex-start;flex-wrap:wrap; }
+ .request-status { margin-left:50px; }
+ .currency-picker select { max-width:130px; }
+ .current-location { max-width:155px;overflow:hidden; }
+}
