@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./auth.css";
 import { CurrencyProvider } from "./components/CurrencyProvider";
 import DisplayScale from "./components/DisplayScale";
 import SiteTranslation from "./components/SiteTranslation";
