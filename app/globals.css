@@ -968,3 +968,12 @@ input::selection,textarea::selection{background:#b9d9ff;color:#082c55}
 .ticket-country-scroll{grid-auto-flow:row;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));grid-template-rows:none;grid-auto-columns:auto;max-height:460px;overflow-y:auto;overflow-x:hidden;scroll-snap-type:y proximity;padding-right:8px}
 .ticket-country-card{scroll-snap-align:start}
 @media(max-width:620px){.ticket-country-scroll{grid-template-columns:1fr;max-height:430px;overflow-y:auto;overflow-x:hidden}}
+
+
+/* Local language support: keep translation entirely inside the page, with no third-party overlay. */
+.goog-te-banner-frame,.goog-te-balloon-frame,.goog-te-menu-frame,.skiptranslate iframe,#goog-gt-tt,.goog-te-spinner-pos{display:none!important;visibility:hidden!important}
+html body{top:0!important}
+body.book-vacation-rtl{direction:rtl;text-align:right}
+body.book-vacation-rtl .travel-topbar,body.book-vacation-rtl .travel-header-inner,body.book-vacation-rtl .travel-nav,body.book-vacation-rtl .travel-header-actions,body.book-vacation-rtl .topbar-right{direction:rtl}
+body.book-vacation-rtl input,body.book-vacation-rtl textarea,body.book-vacation-rtl select{direction:rtl;text-align:right}
+body.book-vacation-rtl .travel-hero-copy,body.book-vacation-rtl .ticket-hero-inner,body.book-vacation-rtl .ticket-form-card,body.book-vacation-rtl .ticket-steps-card,body.book-vacation-rtl .ticket-tracker-card{direction:rtl;text-align:right}
