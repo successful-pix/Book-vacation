@@ -44,7 +44,12 @@ alter table public.ride_requests enable row level security;
 revoke all on public.driver_agents from anon, authenticated;
 revoke all on public.ride_requests from anon, authenticated;
 grant select, insert, update, delete on public.driver_agents to authenticated;
-grant select, insert, update on public.ride_requests to anon, authenticated;
+grant select, update on public.ride_requests to authenticated;
+grant insert (
+  booking_reference, customer_name, customer_phone, customer_email,
+  pickup_location, destination, pickup_date, pickup_time, return_trip,
+  return_date, passengers, luggage, customer_notes
+) on public.ride_requests to anon, authenticated;
 drop policy if exists "Admins manage driver agents" on public.driver_agents;
 create policy "Admins manage driver agents" on public.driver_agents for all to authenticated using (public.is_book_vacation_admin()) with check (public.is_book_vacation_admin());
 drop policy if exists "Admins view ride requests" on public.ride_requests;
