@@ -16,7 +16,7 @@ export default function Home(){
    if(form.pickup_location.trim().toLowerCase()===form.destination.trim().toLowerCase())throw new Error("Pickup and destination must be different places.");
    if(form.return_trip&&(!form.return_date||form.return_date<form.pickup_date))throw new Error("Choose a return date on or after the pickup date.");
    const ref="RIDE-"+crypto.randomUUID().replace(/-/g,"").slice(0,10).toUpperCase();
-   const {error}=await supabase.from("ride_requests").insert({booking_reference:ref,customer_name:form.customer_name.trim(),customer_phone:form.customer_phone.trim(),customer_email:form.customer_email.trim(),pickup_location:form.pickup_location.trim(),destination:form.destination.trim(),pickup_date:form.pickup_date,pickup_time:form.pickup_time,passengers:Number(form.passengers),luggage:form.luggage.trim(),return_trip:form.return_trip,return_date:form.return_trip?form.return_date:null,customer_notes:form.customer_notes.trim(),currency:"NGN"});
+   const {error}=await supabase.from("ride_requests").insert({booking_reference:ref,customer_name:form.customer_name.trim(),customer_phone:form.customer_phone.trim(),customer_email:form.customer_email.trim(),pickup_location:form.pickup_location.trim(),destination:form.destination.trim(),pickup_date:form.pickup_date,pickup_time:form.pickup_time,passengers:Number(form.passengers),luggage:form.luggage.trim(),return_trip:form.return_trip,return_date:form.return_trip?form.return_date:null ,customer_notes:form.customer_notes.trim()});
    if(error)throw error;
    setReference(ref);setForm(initial);
   }catch(err){setError(err instanceof Error?err.message:"Your request could not be sent. Please try again or call directly.");}
