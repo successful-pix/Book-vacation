@@ -14,7 +14,7 @@ export function CurrencyProvider({children}:{children:React.ReactNode}){
  const setCurrency=useCallback((next:string)=>{if(!CURRENCIES.some(c=>c[0]===next))return;setCurrencyState(next);localStorage.setItem("book-vacation-currency",next)},[]);
  const toUSD=useCallback((amount:number,sourceCurrency="USD")=>{if(!Number.isFinite(amount))return null;const sourceRate=rates[sourceCurrency];if(!sourceRate)return sourceCurrency==="USD"?amount:null;return amount/sourceRate},[rates]);
  const formatUSD=useCallback((amount:number)=>money(amount,"USD"),[]);
- const formatLocal=useCallback((amount:number)=>{const converted=ratesReady?amount*(rates[currency]||1):amount;return money(converted,ratesReady?currency:"USD")},[currency,rates,ratesReady]);
+ const formatLocal=useCallback((amount:number)=>{const supported=currency==="USD"||Boolean(rates[currency]);const outputCurrency=ratesReady&&supported?currency:"USD";const converted=outputCurrency==="USD"?amount:amount*(rates[outputCurrency]||1);return money(converted,outputCurrency)},[currency,rates,ratesReady]);
  const value=useMemo(()=>({currency,setCurrency,rates,ratesReady,toUSD,formatUSD,formatLocal,localCurrency:currency}),[currency,setCurrency,rates,ratesReady,toUSD,formatUSD,formatLocal]);
  return <CurrencyContext.Provider value={value}>{children}</CurrencyContext.Provider>
 }
