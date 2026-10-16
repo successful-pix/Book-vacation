@@ -1,0 +1,1 @@
+export default function Page() { return <main><h1>Book Vacation</h1><p>Thoughtful holidays for the people you love.</p></main>; }
