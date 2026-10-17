@@ -21,3 +21,4 @@
 
 .bv-dashboard-user-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}.bv-dashboard-logout{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 13px;border:1px solid #d9e4ef;border-radius:10px;background:#fff;color:#34516f;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}.bv-dashboard-logout:hover{background:#f2f7fd;border-color:#bfd3e9}
 @media(max-width:600px){.bv-dashboard-user-actions{gap:8px}.bv-dashboard-logout{padding:8px 10px;font-size:10px}}
+.booking-ops-support-link{display:inline-flex;align-items:center;padding:9px 12px;border-radius:9px;background:#e6f1ff;color:#1d5da9;text-decoration:none;font-size:11px;font-weight:800;white-space:nowrap}
