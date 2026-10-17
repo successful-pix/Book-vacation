@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Globe2, Headphones, Plane, ShieldCheck, Menu, X, House, BedDouble, UserRound, ChevronDown } from "lucide-react";
+import { ArrowRight, Globe2, Headphones, Plane, ShieldCheck, Menu, X, House, BedDouble, UserRound, ChevronDown, LogOut } from "lucide-react";
 import { CurrencyPicker } from "./CurrencyProvider";
 import { supabase } from "../lib/supabase";
 import { CurrentLocation, LocationAutocomplete } from "./LocationLookup";
