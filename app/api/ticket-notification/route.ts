@@ -78,7 +78,7 @@ export async function POST(request: Request) {
       "payment-rejected": "Your payment receipt needs attention",
     };
     const title = titles[event];
-    const link = "https://book-vacation.vercel.app/tickets?reference=" + encodeURIComponent(ticket.booking_reference) + (event === "payment-approved" ? "&access=" + encodeURIComponent(token) : "");
+    const link = "https://book-vacation-chavez-banco.vercel.app/tickets?reference=" + encodeURIComponent(ticket.booking_reference) + (event === "payment-approved" ? "&access=" + encodeURIComponent(token) : "");
     const route = esc(ticket.origin) + " → " + esc(ticket.destination);
     const price = money(Number(ticket.ticket_amount), ticket.currency);
     const deadline = formatDeadline(ticket.payment_deadline_at);
