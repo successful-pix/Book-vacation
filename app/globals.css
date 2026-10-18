@@ -977,3 +977,36 @@ body.book-vacation-rtl{direction:rtl;text-align:right}
 body.book-vacation-rtl .travel-topbar,body.book-vacation-rtl .travel-header-inner,body.book-vacation-rtl .travel-nav,body.book-vacation-rtl .travel-header-actions,body.book-vacation-rtl .topbar-right{direction:rtl}
 body.book-vacation-rtl input,body.book-vacation-rtl textarea,body.book-vacation-rtl select{direction:rtl;text-align:right}
 body.book-vacation-rtl .travel-hero-copy,body.book-vacation-rtl .ticket-hero-inner,body.book-vacation-rtl .ticket-form-card,body.book-vacation-rtl .ticket-steps-card,body.book-vacation-rtl .ticket-tracker-card{direction:rtl;text-align:right}
+
+
+/* Compact typography and responsive country cards */
+body{font-size:14px}
+.bv-home .bv-hero-copy h1{font-size:clamp(32px,4.2vw,48px);line-height:1.08;letter-spacing:-1.4px}
+.bv-home .bv-section-heading h2,.bv-home .bv-why-copy h2,.bv-home .bv-final-cta h2{font-size:clamp(22px,2.6vw,30px);line-height:1.2;letter-spacing:-.6px}
+.bv-home .bv-section-heading p,.bv-home .bv-destination-body p,.bv-home .bv-why-copy>p,.bv-home .bv-final-cta p{font-size:13px;line-height:1.65}
+.bv-destination-photo>div small{font-size:11px}
+.bv-destination-photo>div h3{font-size:22px}
+.ticket-page,.booking-ops-page,.admin-support-page,.support-chat-shell{font-size:13px}
+.ticket-page h1,.booking-ops-page h1,.admin-support-page h1{font-size:clamp(25px,3vw,34px);line-height:1.15}
+.ticket-page h2,.booking-ops-page h2,.admin-support-page h2,.support-chat-shell h2{font-size:20px;line-height:1.25}
+.ticket-page p,.booking-ops-page p,.admin-support-page p,.support-chat-shell p{font-size:13px;line-height:1.6}
+.ticket-form label,.booking-ops-form label,.support-chat-start-form label{font-size:12px}
+.bv-dashboard-welcome h1{font-size:clamp(24px,3vw,34px);line-height:1.2;letter-spacing:-.5px}
+.bv-dashboard-identity{display:flex;align-items:center;gap:6px;color:#48617d;font-size:12px!important;font-weight:700}
+.bv-dashboard-panel h2{font-size:19px}
+.bv-dashboard-stats small{font-size:11px}
+.bv-dashboard-stats strong{font-size:22px}
+.ticket-country-name{font-size:12px}
+.ticket-country-prices small{font-size:10px}
+.ticket-country-prices strong{font-size:12px}
+.ticket-price-summary strong{font-size:23px}
+.ticket-price-summary small{font-size:11px;line-height:1.5}
+.ticket-find-card p{font-size:12px}
+@media(max-width:700px){
+ .bv-home .bv-hero-copy h1{font-size:clamp(29px,8vw,38px)}
+ .bv-home .bv-section-heading{align-items:flex-start;gap:12px}
+ .bv-home .bv-destination-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .bv-home .bv-destination-photo{min-height:180px}
+ .bv-home .bv-destination-photo>div h3{font-size:18px}
+ .bv-dashboard-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
