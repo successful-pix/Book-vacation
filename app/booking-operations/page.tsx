@@ -4,7 +4,7 @@ import {FormEvent} from "react";
 import {CheckCircle2,Eye,LockKeyhole,LogOut,RefreshCw,Save,ShieldCheck,UploadCloud,XCircle} from "lucide-react";
 import {supabase} from "../lib/supabase";
 
-type Ticket={id:string;booking_reference:string;guest_access_token:string;customer_user_id:string|null;customer_name:string;customer_email:string;customer_phone:string;country_code:string;country_name:string;origin:string;destination:string;trip_type:string;departure_date:string;return_date:string|null;travellers_count:number;cabin_class:string;ticket_amount:number;currency:string;status:string;payment_status:string;payment_account_name:string;payment_bank:string;payment_account_number:string;payment_instructions:string;ticket_details:string;operations_note:string;created_at:string};
+type Ticket={id:string;booking_reference:string;guest_access_token:string;customer_user_id:string|null;customer_name:string;customer_email:string;customer_phone:string;country_code:string;country_name:string;origin:string;destination:string;trip_type:string;departure_date:string;return_date:string|null;travellers_count:number;cabin_class:string;ticket_amount:number;currency:string;status:string;payment_status:string;payment_account_name:string;payment_bank:string;payment_account_number:string;payment_instructions:string;ticket_details:string;operations_note:string;ticket_number:string|null;created_at:string};
 type Receipt={id:string;request_id:string;booking_reference:string;receipt_path:string;payment_reference:string;status:string;operations_note:string;created_at:string;reviewed_at:string|null};
 const label=(value:string)=>value.replaceAll("_"," ").replace(/\b\w/g,c=>c.toUpperCase());
 export default function BookingOperationsPage(){
