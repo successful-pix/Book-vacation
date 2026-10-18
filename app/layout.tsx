@@ -7,7 +7,7 @@ import SiteTranslation from "./components/SiteTranslation";
 import NoCopy from "./components/NoCopy";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://book-vacation.vercel.app"),
+  metadataBase: new URL("https://www.bookvacation.online"),
   title: "Book Vacation — Flights, Stays & Holidays",
   description: "Discover flights, stays and holiday travel options around the world with Book Vacation.",
   openGraph: { type: "website", siteName: "Book Vacation", title: "Book Vacation — Flights, Stays & Holidays", description: "Discover flights, stays and holiday travel options around the world with Book Vacation." },
