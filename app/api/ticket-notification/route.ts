@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     const requestId = String(body.requestId || "");
     const token = String(body.accessToken || "");
     const event = String(body.event || "");
-    const allowedEvents = ["request-received", "payment-details", "receipt-submitted", "payment-approved", "payment-rejected"];
+    const allowedEvents = ["request-received", "payment-details", "receipt-submitted", "payment-verified", "payment-approved", "payment-rejected"];
     if (!/^[0-9a-f-]{36}$/i.test(requestId) || !/^[0-9a-f-]{36}$/i.test(token) || !allowedEvents.includes(event)) {
       return NextResponse.json({ error: "Invalid notification request." }, { status: 400 });
     }
@@ -52,6 +52,9 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "No submitted receipt was found for this request." }, { status: 409 });
       }
     }
+    if (event === "payment-verified" && (ticket.status !== "paid" || ticket.payment_status !== "paid")) {
+      return NextResponse.json({ error: "Payment must be verified before sending this update." }, { status: 409 });
+    }
     if (event === "payment-approved" && (ticket.status !== "confirmed" || ticket.payment_status !== "paid" || !ticket.ticket_number)) {
       return NextResponse.json({ error: "A ticket can only be confirmed after payment approval." }, { status: 409 });
     }
@@ -70,11 +73,12 @@ export async function POST(request: Request) {
       "request-received": "We received your ticket request",
       "payment-details": "Your payment instructions are ready",
       "receipt-submitted": "We received your payment receipt",
+      "payment-verified": "Payment verified — booking in progress",
       "payment-approved": "Your Book Vacation ticket is confirmed",
       "payment-rejected": "Your payment receipt needs attention",
     };
     const title = titles[event];
-    const link = "https://book-vacation.vercel.app/tickets?reference=" + encodeURIComponent(ticket.booking_reference) + "&access=" + encodeURIComponent(token);
+    const link = "https://book-vacation.vercel.app/tickets?reference=" + encodeURIComponent(ticket.booking_reference) + (event === "payment-approved" ? "&access=" + encodeURIComponent(token) : "");
     const route = esc(ticket.origin) + " → " + esc(ticket.destination);
     const price = money(Number(ticket.ticket_amount), ticket.currency);
     const deadline = formatDeadline(ticket.payment_deadline_at);
@@ -82,14 +86,16 @@ export async function POST(request: Request) {
 
     if (event === "payment-details") {
       detail = "<div style='margin:24px 0;padding:20px;background:#f2f7ff;border:1px solid #d8e6ff;border-radius:12px'><h2 style='margin:0 0 14px;font-size:18px;color:#12356d'>Payment instructions</h2><p style='margin:8px 0'><b>Account name:</b> " + esc(ticket.payment_account_name) + "</p><p style='margin:8px 0'><b>Bank:</b> " + esc(ticket.payment_bank) + "</p><p style='margin:8px 0'><b>Account number:</b> " + esc(ticket.payment_account_number) + "</p><p style='margin:8px 0'><b>Amount due:</b> " + esc(price) + "</p><p style='margin:8px 0;white-space:pre-line'>" + esc(ticket.payment_instructions) + "</p><p style='margin:16px 0 0;color:#a13b13'><b>Payment deadline:</b> Please complete payment within 30 minutes, by " + esc(deadline) + ". If payment is not completed in time, your request may expire and you may need to submit a new request.</p></div>";
+    } else if (event === "payment-verified") {
+      detail = "<div style='margin:24px 0;padding:20px;background:#f2f7ff;border:1px solid #d8e6ff;border-radius:12px'><p style='margin:0 0 8px;font-weight:700;color:#12356d'>PAYMENT VERIFIED</p><p style='margin:0;line-height:1.7'>Your payment receipt has been approved. Our booking team is now completing the airline booking. Your ticket is not confirmed until you receive the airline ticket number and confirmation email.</p></div>";
     } else if (event === "payment-approved") {
-      detail = "<div style='margin:24px 0;padding:22px;background:#effaf4;border:1px solid #bfe8cf;border-radius:12px'><p style='margin:0 0 8px;color:#137547;font-weight:700'>PAYMENT CONFIRMED · TICKET ISSUED</p><p style='margin:0 0 6px;color:#526477;font-size:12px;text-transform:uppercase;letter-spacing:1px'>Your ticket number</p><p style='margin:0;font-size:26px;font-weight:800;letter-spacing:1px;color:#12356d'>" + esc(ticket.ticket_number) + "</p><p style='margin:14px 0 0;white-space:pre-line'>" + esc(ticket.ticket_details || "Your payment has been approved and your ticket has been issued.") + "</p></div>";
+      detail = "<div style='margin:24px 0;padding:22px;background:#effaf4;border:1px solid #bfe8cf;border-radius:12px'><p style='margin:0 0 8px;color:#137547;font-weight:700'>BOOKING CONFIRMED · TICKET DETAILS RECORDED</p><p style='margin:0 0 6px;color:#526477;font-size:12px;text-transform:uppercase;letter-spacing:1px'>Your ticket number</p><p style='margin:0;font-size:26px;font-weight:800;letter-spacing:1px;color:#12356d'>" + esc(ticket.ticket_number) + "</p><p style='margin:14px 0 0;white-space:pre-line'>" + esc(ticket.ticket_details || "Your booking details have been recorded. Please verify your official airline e-ticket before travelling.") + "</p><p style='margin:16px 0 0'><b>Your private access code:</b> " + esc(token) + "</p><p style='margin:8px 0 0;color:#536579;font-size:12px'>Keep this code private. It lets you access the full booking details.</p></div>";
     } else if (event === "payment-rejected") {
       detail = "<div style='margin:24px 0;padding:18px;background:#fff7ed;border:1px solid #fed7aa;border-radius:12px'><p style='margin:0 0 8px;font-weight:700;color:#9a3412'>We could not verify this receipt.</p><p style='margin:0;color:#7c4a2d'>Please check the payment details and upload a clear, correct receipt, or contact the Book Vacation Reservations Team for assistance.</p></div>";
     } else if (event === "receipt-submitted") {
       detail = "<p style='margin:20px 0;padding:16px;background:#f2f7ff;border-radius:10px'>Your receipt has been received and is awaiting verification. Uploading a receipt does not itself confirm a ticket. We will email you when the review is complete.</p>";
     } else {
-      detail = "<p style='margin:20px 0'>Your request has been recorded. Please wait for the payment instructions to arrive before transferring money.</p>";
+      detail = "<p style='margin:20px 0'>Your request has been recorded. Your booking reference is shown above. Wait for our team to verify the airline fare and send payment instructions. Your private access code will be sent only after the ticket is confirmed.</p>";
     }
 
     const rows = "<p style='margin:8px 0'><b>Booking reference:</b> " + esc(ticket.booking_reference) + "</p><p style='margin:8px 0'><b>Route:</b> " + route + "</p><p style='margin:8px 0'><b>Trip:</b> " + esc(ticket.trip_type === "oneway" ? "One way" : "Return") + "</p><p style='margin:8px 0'><b>Departure:</b> " + esc(ticket.departure_date) + (ticket.return_date ? "<br/><b>Return:</b> " + esc(ticket.return_date) : "") + "</p><p style='margin:8px 0'><b>Travellers:</b> " + esc(ticket.travellers_count) + "</p><p style='margin:8px 0'><b>Request amount:</b> " + esc(price) + "</p>";
