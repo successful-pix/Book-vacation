@@ -5,6 +5,7 @@ import { CurrencyProvider } from "./components/CurrencyProvider";
 import DisplayScale from "./components/DisplayScale";
 import SiteTranslation from "./components/SiteTranslation";
 import NoCopy from "./components/NoCopy";
+import LoadingSplash from "./components/LoadingSplash";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.bookvacation.online"),
@@ -18,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><NoCopy/><DisplayScale/><SiteTranslation/><CurrencyProvider>{children}</CurrencyProvider></body></html>;
+  return <html lang="en"><body><LoadingSplash/><NoCopy/><DisplayScale/><SiteTranslation/><CurrencyProvider>{children}</CurrencyProvider></body></html>;
 }
