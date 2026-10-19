@@ -8,7 +8,7 @@ const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://sakvxjyemhvzetlxhuc
 const publicKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "sb_publishable_SxGovbWi1inGbEhxzTKTuw_2_D_RtGM";
 
 function clientFor(request: Request) {
-  const token = request.headers.get("authorization")?.replace(/^Bearer\\s+/i, "").trim();
+  const token = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "").trim();
   if (!token) return null;
   return createClient(url, publicKey, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
@@ -28,7 +28,7 @@ export async function GET(request: Request) {
   const client = clientFor(request);
   if (!client) return NextResponse.json({ error: "Sign in first." }, { status: 401 });
   try {
-    const token = request.headers.get("authorization")?.replace(/^Bearer\\s+/i, "").trim() || "";
+    const token = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "").trim() || "";
     const auth = await verifyAdmin(client, token);
     if ("error" in auth) return auth.error;
     const { data, error } = await client.rpc("admin_list_registered_users");
