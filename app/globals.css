@@ -1010,3 +1010,27 @@ body{font-size:14px}
  .bv-home .bv-destination-photo>div h3{font-size:18px}
  .bv-dashboard-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+/* Admin user management */
+.booking-ops-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 18px;border-bottom:1px solid #e2e8f0;padding-bottom:12px}
+.booking-ops-tabs button{display:inline-flex;align-items:center;gap:10px;border:1px solid #dbe4f0;border-radius:12px;padding:11px 15px;background:#fff;color:#475569;font-weight:700;cursor:pointer}
+.booking-ops-tabs button.active{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8}
+.booking-ops-tabs button span{display:inline-grid;place-items:center;min-width:24px;height:24px;padding:0 6px;border-radius:999px;background:#e2e8f0;color:#334155;font-size:12px}
+.booking-ops-tabs button.active span{background:#dbeafe;color:#1d4ed8}
+.booking-ops-users{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:22px;box-shadow:0 8px 30px rgba(15,23,42,.04)}
+.booking-ops-users-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}
+.booking-ops-users-heading h2{margin:0;font-size:22px;color:#10213c}
+.booking-ops-users-heading p{margin:7px 0 0;color:#64748b;font-size:14px;line-height:1.6;max-width:650px}
+.booking-ops-users-heading>button{display:inline-flex;align-items:center;gap:8px;border:1px solid #dbe4f0;background:#fff;border-radius:10px;padding:10px 12px;font-weight:700;color:#334155;cursor:pointer;white-space:nowrap}
+.booking-ops-users-table-wrap{width:100%;overflow:auto}
+.booking-ops-users-table{width:100%;border-collapse:collapse;min-width:760px;text-align:left}
+.booking-ops-users-table th{padding:12px 14px;background:#f8fafc;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #e2e8f0}
+.booking-ops-users-table td{padding:15px 14px;border-bottom:1px solid #eef2f7;color:#475569;font-size:13px;vertical-align:middle}
+.booking-ops-users-table td:first-child strong,.booking-ops-users-table td:first-child small{display:block}
+.booking-ops-users-table td:first-child strong{color:#0f172a;font-size:14px;overflow-wrap:anywhere}
+.booking-ops-users-table td:first-child small{margin-top:4px;color:#64748b;overflow-wrap:anywhere}
+.user-role-admin,.user-role-user,.user-status-confirmed,.user-status-pending{display:inline-block;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}
+.user-role-admin{background:#dbeafe;color:#1d4ed8}.user-role-user{background:#f1f5f9;color:#475569}.user-status-confirmed{background:#dcfce7;color:#166534}.user-status-pending{background:#fef3c7;color:#92400e}
+.user-promote-button,.user-demote-button{border:0;border-radius:9px;padding:9px 11px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap}
+.user-promote-button{background:#1d4ed8;color:#fff}.user-demote-button{background:#fff1f2;color:#be123c}.user-promote-button:disabled,.user-demote-button:disabled{opacity:.55;cursor:wait}
+@media(max-width:640px){.booking-ops-users{padding:14px}.booking-ops-users-heading{flex-direction:column}.booking-ops-users-heading>button{width:100%;justify-content:center}.booking-ops-tabs button{flex:1;justify-content:center;padding:10px 8px;font-size:12px}}
