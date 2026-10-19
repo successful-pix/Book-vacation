@@ -16,7 +16,7 @@ function clientFor(request: Request) {
   });
 }
 
-async function verifyAdmin(client: ReturnType<typeof createClient>, token: string) {
+async function verifyAdmin(client: any, token: string) {
   const { data: { user }, error: userError } = await client.auth.getUser(token);
   if (userError || !user) return { error: NextResponse.json({ error: "Your session is invalid. Sign in again." }, { status: 401 }) } as const;
   const { data: membership, error } = await client.from("admin_users").select("user_id").eq("user_id", user.id).maybeSingle();
