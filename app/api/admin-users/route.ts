@@ -16,8 +16,8 @@ function clientFor(request: Request) {
   });
 }
 
-async function verifyAdmin(client: ReturnType<typeof createClient>) {
-  const { data: { user }, error: userError } = await client.auth.getUser();
+async function verifyAdmin(client: ReturnType<typeof createClient>, token: string) {
+  const { data: { user }, error: userError } = await client.auth.getUser(token);
   if (userError || !user) return { error: NextResponse.json({ error: "Your session is invalid. Sign in again." }, { status: 401 }) } as const;
   const { data: membership, error } = await client.from("admin_users").select("user_id").eq("user_id", user.id).maybeSingle();
   if (error || !membership) return { error: NextResponse.json({ error: "Only an existing authorised admin can manage admins." }, { status: 403 }) } as const;
@@ -28,7 +28,8 @@ export async function GET(request: Request) {
   const client = clientFor(request);
   if (!client) return NextResponse.json({ error: "Sign in first." }, { status: 401 });
   try {
-    const auth = await verifyAdmin(client);
+    const token = request.headers.get("authorization")?.replace(/^Bearer\\s+/i, "").trim() || "";
+    const auth = await verifyAdmin(client, token);
     if ("error" in auth) return auth.error;
     const { data, error } = await client.rpc("admin_list_registered_users");
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
