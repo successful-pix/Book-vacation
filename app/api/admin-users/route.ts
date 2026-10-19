@@ -43,7 +43,8 @@ export async function POST(request: Request) {
   const client = clientFor(request);
   if (!client) return NextResponse.json({ error: "Sign in first." }, { status: 401 });
   try {
-    const auth = await verifyAdmin(client);
+    const token = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "").trim() || "";
+    const auth = await verifyAdmin(client, token);
     if ("error" in auth) return auth.error;
     const body = await request.json() as { userId?: string; makeAdmin?: boolean };
     const targetId = String(body.userId || "");
