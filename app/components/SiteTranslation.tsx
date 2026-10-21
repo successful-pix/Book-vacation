@@ -1,5 +1,5 @@
 "use client";
-import {useEffect} from "react";
+import {useEffect,useState} from "react";
 
 type Language="en"|"pt"|"es"|"fr"|"de"|"ar"|"vi";
 const LANGUAGES:Language[]=["en","pt","es","fr","de","ar","vi"];
@@ -70,9 +70,10 @@ function applyLocalLanguage(language:Language){
  document.querySelectorAll<HTMLElement>("[placeholder],[aria-label],[title]").forEach(el=>{let originals=originalAttributes.get(el);if(!originals){originals=new Map<string,string>();originalAttributes.set(el,originals)}for(const attr of ["placeholder","aria-label","title"]){const value=el.getAttribute(attr);if(value!==null){const previous=originals.get(attr);const original=previous&&value===previous.translated?previous.original:value;const translated=translateText(original,language);originals.set(attr,{original,translated});if(value!==translated)el.setAttribute(attr,translated)}}});
 }
 export default function SiteTranslation(){
+ const [selectedLanguage,setSelectedLanguage]=useState<Language>(()=>currentLanguage());
  useEffect(()=>{
   let active=true;let observer:MutationObserver|undefined;let scheduled=false;let lastLanguage:Language="en";
-  const apply=()=>{if(!active)return;const language=currentLanguage();lastLanguage=language;applyLocalLanguage(language)};
+  const apply=()=>{if(!active)return;const language=currentLanguage();lastLanguage=language;setSelectedLanguage(language);applyLocalLanguage(language)};
   const schedule=()=>{if(scheduled)return;scheduled=true;queueMicrotask(()=>{scheduled=false;if(active){const language=currentLanguage();if(language!==lastLanguage)apply();else applyLocalLanguage(language)}})};
   try{document.cookie="googtrans=;path=/;max-age=0";document.cookie="googtrans=;path=/;domain="+location.hostname+";max-age=0"}catch{}
   apply();
@@ -85,7 +86,7 @@ export default function SiteTranslation(){
   <div data-no-translate style={{position:"fixed",right:14,bottom:14,zIndex:9999,display:"flex",alignItems:"center",gap:6,padding:"7px 9px",borderRadius:12,background:"rgba(255,255,255,.97)",border:"1px solid rgba(15,23,42,.14)",boxShadow:"0 4px 18px rgba(15,23,42,.12)"}}>
    <span aria-hidden="true" style={{fontSize:16}}>🌐</span>
    <label htmlFor="book-vacation-language-select" style={{fontSize:12,fontWeight:600,color:"#334155"}}>Language</label>
-   <select id="book-vacation-language-select" aria-label="Choose language" value={currentLanguage()} onChange={(event)=>{const value=event.target.value as Language;try{localStorage.setItem("book-vacation-language",value)}catch{};window.dispatchEvent(new CustomEvent("book-vacation-language-change",{detail:value}));applyLocalLanguage(value)}} style={{maxWidth:135,fontSize:12,fontWeight:600,color:"#0f172a",background:"#fff",border:"1px solid #cbd5e1",borderRadius:8,padding:"6px 8px",outlineOffset:2}}>
+   <select id="book-vacation-language-select" aria-label="Choose language" value={selectedLanguage} onChange={(event)=>{const value=event.target.value as Language;setSelectedLanguage(value);try{localStorage.setItem("book-vacation-language",value)}catch{};window.dispatchEvent(new CustomEvent("book-vacation-language-change",{detail:value}));applyLocalLanguage(value)}} style={{maxWidth:135,fontSize:12,fontWeight:600,color:"#0f172a",background:"#fff",border:"1px solid #cbd5e1",borderRadius:8,padding:"6px 8px",outlineOffset:2}}>
     <option value="en">English</option>
     <option value="pt">Português</option>
     <option value="es">Español</option>
