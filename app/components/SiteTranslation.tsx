@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 type Language = "en" | "pt" | "es" | "fr" | "de" | "ar" | "vi";
 
@@ -49,11 +49,7 @@ function setTranslationCookie(language: Language) {
 }
 
 export default function SiteTranslation() {
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>("en");
-
   useEffect(() => {
-    setSelectedLanguage(readLanguage());
-
     // Google Translate translates full page content, including longer copy and dynamically
     // rendered sections that a small hand-written dictionary cannot cover.
     const win = window;
@@ -93,72 +89,13 @@ export default function SiteTranslation() {
     };
   }, []);
 
-  function changeLanguage(language: Language) {
-    setSelectedLanguage(language);
-    try {
-      localStorage.setItem("book-vacation-language", language);
-    } catch {
-      // The language still applies for this page even if storage is unavailable.
-    }
-    setTranslationCookie(language);
-    // Reload lets Google's page translator translate the whole page consistently.
-    window.location.reload();
-  }
 
   return (
-    <>
-      <div
-        id="google_translate_element"
-        aria-hidden="true"
-        style={{ position: "fixed", left: "-10000px", top: 0, width: 1, height: 1, overflow: "hidden" }}
-      />
-      <div
-        translate="no"
-        className="notranslate"
-        data-no-translate
-        style={{
-          position: "fixed",
-          right: 12,
-          bottom: "max(12px, env(safe-area-inset-bottom))",
-          zIndex: 2147483647,
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          padding: "9px 11px",
-          borderRadius: 14,
-          background: "#ffffff",
-          border: "1px solid #cbd5e1",
-          boxShadow: "0 6px 24px rgba(15,23,42,.22)",
-          color: "#0f172a",
-          fontFamily: "Arial, sans-serif",
-        }}
-      >
-        <span aria-hidden="true" style={{ fontSize: 18 }}>🌐</span>
-        <label htmlFor="book-vacation-language-select" style={{ fontSize: 12, fontWeight: 700, whiteSpace: "nowrap" }}>
-          Language
-        </label>
-        <select
-          id="book-vacation-language-select"
-          aria-label="Choose website language"
-          value={selectedLanguage}
-          onChange={(event) => changeLanguage(event.target.value as Language)}
-          style={{
-            width: 132,
-            maxWidth: "38vw",
-            padding: "8px 7px",
-            border: "1px solid #94a3b8",
-            borderRadius: 9,
-            background: "#fff",
-            color: "#0f172a",
-            fontSize: 12,
-            fontWeight: 700,
-          }}
-        >
-          {LANGUAGES.map((language) => (
-            <option key={language.code} value={language.code}>{language.label}</option>
-          ))}
-        </select>
-      </div>
-    </>
+    <div
+      id="google_translate_element"
+      aria-hidden="true"
+      translate="no"
+      style={{ position: "absolute", left: "-10000px", top: 0, width: 1, height: 1, overflow: "hidden" }}
+    />
   );
 }
