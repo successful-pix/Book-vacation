@@ -14,7 +14,7 @@ type Ticket = {
   cabin_class: string; ticket_amount: number; currency: string; status: string;
   payment_status: string; payment_method: PaymentMethod | string;
   payment_account_name: string; payment_bank: string; payment_account_number: string;
-  payment_instructions: string; payment_deadline_at: string | null;
+  payment_instructions: string; payment_deadline_at: string | null; payment_account_provided: boolean; customer_status_hidden: boolean;
 };
 const apiUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://sakvxjyemhvzetlxhucd.supabase.co";
 const apiKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "sb_publishable_SxGovbWi1inGbEhxzTKTuw_2_D_RtGM";
@@ -61,7 +61,7 @@ export default function TicketPaymentPage() {
   useEffect(() => { const timer = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(timer); }, []);
   const remaining = useMemo(() => ticket?.payment_deadline_at ? new Date(ticket.payment_deadline_at).getTime() - now : null, [ticket?.payment_deadline_at, now]);
   const isExpired = remaining !== null && remaining <= 0 && ticket?.payment_status !== "submitted" && ticket?.payment_status !== "paid";
-  const detailsReady = Boolean(ticket && (ticket.status === "awaiting_payment" || ticket.status === "receipt_submitted" || ticket.status === "paid" || ticket.status === "confirmed") && (ticket.payment_account_number || ticket.payment_instructions || ticket.payment_account_name || ticket.payment_bank));
+  const detailsReady = Boolean(ticket && ticket.payment_account_provided && (ticket.status === "awaiting_payment" || ticket.status === "receipt_submitted" || ticket.status === "paid" || ticket.status === "confirmed") && (ticket.payment_account_number || ticket.payment_instructions || ticket.payment_account_name || ticket.payment_bank));
 
   async function chooseMethod(next: PaymentMethod) {
     if (!ticket || !access) return;
@@ -109,7 +109,7 @@ export default function TicketPaymentPage() {
     {loading ? <div className="pay-panel pay-loading"><RefreshCw className="pay-spin" size={22}/> Loading your booking…</div> : error && !ticket ? <div className="pay-alert pay-error" role="alert">{error}<p><Link href="/tickets">Return to ticket requests</Link></p></div> : ticket ? <>
       <section className="pay-summary"><div><span className="pay-label">BOOKING REFERENCE</span><strong>{ticket.booking_reference}</strong><small>{ticket.origin} → {ticket.destination}</small></div><div><span className="pay-label">AMOUNT DUE</span><strong>{price(Number(ticket.ticket_amount), ticket.currency)}</strong><small>{ticket.travellers_count} traveller{ticket.travellers_count===1?"":"s"} · {ticket.cabin_class}</small></div></section>
       {error && <div className="pay-alert pay-error" role="alert">{error}</div>}{notice && <div className="pay-alert pay-success" role="status"><CheckCircle2 size={17}/>{notice}</div>}
-      {ticket.payment_status === "submitted" || ticket.payment_status === "paid" ? <div className="pay-review"><CheckCircle2 size={23}/><div><strong>{ticket.payment_status === "paid" ? "Payment verified" : "Receipt received"}</strong><p>{ticket.payment_status === "paid" ? "Your payment has been marked as received by the booking team." : "Your receipt is awaiting verification. Do not upload again unless support asks you to."}</p></div></div> : <>
+      {ticket.payment_status === "submitted" || ticket.payment_status === "paid" ? <div className="pay-review"><CheckCircle2 size={23}/><div><strong>{ticket.payment_status === "paid" ? "Payment received" : ticket.customer_status_hidden ? "Payment update received" : "Receipt received"}</strong><p>{ticket.payment_status === "paid" ? "Your payment has been marked as received by the booking team." : ticket.customer_status_hidden ? "The booking team is updating your request. Do not upload again unless support asks you to." : "Your receipt is awaiting verification. Do not upload again unless support asks you to."}</p></div></div> : <>
         <section className="pay-panel"><div className="pay-section-title"><span>1</span><div><h2>Choose how to pay</h2><p>Select your preferred method below.</p></div></div>
           <div className="pay-methods">
             <button type="button" className={"pay-method"+(method==="bank_transfer"?" selected":"")} onClick={()=>void chooseMethod("bank_transfer")} disabled={savingMethod||isExpired}><span className="pay-method-icon"><CreditCard size={22}/></span><span><strong>Bank transfer</strong><small>Transfer from your bank or banking app</small></span><span className="pay-radio">{method==="bank_transfer"?"✓":""}</span></button>
@@ -117,7 +117,7 @@ export default function TicketPaymentPage() {
           </div>
           {savingMethod && <p className="pay-muted">Saving your selection…</p>}
         </section>
-        <section className="pay-panel"><div className="pay-section-title"><span>2</span><div><h2>{method==="bank_transfer"?"Bank transfer details":"Crypto payment details"}</h2><p>{detailsReady ? "Use only the payment details shown for this booking reference." : "Your booking team will add the payment details to this request. Do not send money until they appear here."}</p></div></div>
+        <section className="pay-panel"><div className="pay-section-title"><span>2</span><div><h2>{method==="bank_transfer"?"Bank transfer details":"Crypto payment details"}</h2><p>{detailsReady ? "Use only the payment details shown for this booking reference." : ticket.customer_status_hidden ? "The booking team is updating your request. Refresh later for updates." : "Your booking team will add the payment details to this request. Do not send money until they appear here."}</p></div></div>
           {detailsReady ? <div className="pay-details">
             {method==="bank_transfer" ? <>
               <div><span>Account name</span><strong>{ticket.payment_account_name||"Not provided"}</strong>{ticket.payment_account_name&&<button type="button" onClick={()=>void copy(ticket.payment_account_name,"account name")}><Copy size={14}/>{copied==="account name"?"Copied":"Copy"}</button>}</div>
@@ -130,7 +130,7 @@ export default function TicketPaymentPage() {
             </>}
             <div className="pay-amount"><span>Amount to pay</span><strong>{price(Number(ticket.ticket_amount),ticket.currency)}</strong></div>
             {ticket.payment_instructions&&<div className="pay-instructions"><span>Additional instructions</span><p>{ticket.payment_instructions}</p></div>}
-          </div> : <div className="pay-waiting"><Clock3 size={21}/><div><strong>Payment details are being prepared</strong><p>Keep this booking reference. Refresh this page in a moment or contact support if you need help.</p><button type="button" onClick={()=>void load()}>Refresh payment details</button></div></div>}
+          </div> : <div className="pay-waiting"><Clock3 size={21}/><div><strong>{ticket.customer_status_hidden?"Booking in progress":"Payment details are being prepared"}</strong><p>{ticket.customer_status_hidden?"The booking team is updating your request. Refresh this page later for updates.":"Keep this booking reference. Refresh this page in a moment or contact support if you need help."}</p><button type="button" onClick={()=>void load()}>Refresh payment details</button></div></div>}
           {ticket.payment_deadline_at && <div className={"pay-deadline"+(isExpired?" expired":"")}><Clock3 size={18}/><div><strong>{isExpired?"Payment window expired":"Payment must be completed within 30 minutes"}</strong><p>{remaining!==null && !isExpired ? "Time remaining: "+Math.floor(remaining/60000)+"m "+Math.floor((remaining%60000)/1000)+"s" : isExpired ? "Contact support for updated instructions. Do not send funds using expired details." : "The timer starts when the booking team issues payment details."}</p></div></div>}
         </section>
         {detailsReady && !isExpired && <section className="pay-panel"><div className="pay-section-title"><span>3</span><div><h2>Upload payment receipt</h2><p>Accepted: JPG, PNG, WEBP or PDF · maximum 10 MB.</p></div></div><form className="pay-receipt-form" onSubmit={submitReceipt}><label>Transfer / transaction reference<input value={paymentReference} onChange={e=>setPaymentReference(e.target.value)} placeholder="Enter the transaction reference"/></label><label className="pay-file"><UploadCloud size={20}/><span>{file?file.name:"Choose receipt file"}</span><input type="file" accept=".jpg,.jpeg,.png,.webp,.pdf,image/jpeg,image/png,image/webp,application/pdf" required onChange={e=>setFile(e.target.files?.[0]||null)}/></label><button className="pay-primary" disabled={uploading||!file}>{uploading?"Uploading receipt…":"Submit receipt for review"} <ArrowRight size={16}/></button><p className="pay-disclaimer"><ShieldCheck size={15}/> Uploading a receipt does not automatically confirm payment. The booking team must verify it.</p></form></section>}
