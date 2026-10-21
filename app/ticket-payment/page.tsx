@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 import { ArrowLeft, ArrowRight, Bitcoin, CheckCircle2, Clock3, Copy, CreditCard, Headphones, LockKeyhole, RefreshCw, ShieldCheck, UploadCloud, WalletCards } from "lucide-react";
 import Link from "next/link";
@@ -23,10 +22,8 @@ const clientFor = (token: string) => createClient(apiUrl, apiKey, { auth: { pers
 const price = (amount: number, currency: string) => { try { return new Intl.NumberFormat("en", { style: "currency", currency, maximumFractionDigits: 2 }).format(amount); } catch { return currency + " " + amount.toLocaleString(); } };
 
 export default function TicketPaymentPage() {
-  const params = useSearchParams();
-  const router = useRouter();
-  const reference = (params.get("reference") || "").toUpperCase();
-  const access = params.get("access") || "";
+  const [reference, setReference] = useState("");
+  const [access, setAccess] = useState("");
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [method, setMethod] = useState<PaymentMethod>("bank_transfer");
   const [file, setFile] = useState<File | null>(null);
@@ -59,7 +56,8 @@ export default function TicketPaymentPage() {
     finally { setLoading(false); }
   }, [reference, access]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => { const params = new URLSearchParams(window.location.search); const ref = (params.get("reference") || "").toUpperCase(); const token = params.get("access") || ""; setReference(ref); setAccess(token); if (!ref || !token) { setError("This payment link is incomplete. Open it from your booking confirmation or return to the ticket page."); setLoading(false); } }, []);
+  useEffect(() => { if (reference && access) void load(); }, [reference, access, load]);
   useEffect(() => { const timer = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(timer); }, []);
   const remaining = useMemo(() => ticket?.payment_deadline_at ? new Date(ticket.payment_deadline_at).getTime() - now : null, [ticket?.payment_deadline_at, now]);
   const isExpired = remaining !== null && remaining <= 0 && ticket?.payment_status !== "submitted" && ticket?.payment_status !== "paid";
