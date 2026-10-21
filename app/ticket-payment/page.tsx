@@ -92,7 +92,7 @@ export default function TicketPaymentPage() {
       const { error: insertError } = await c.from("ticket_payment_receipts").insert({ request_id: ticket.id, booking_reference: ticket.booking_reference, receipt_path: path, payment_reference: paymentReference.trim() });
       if (insertError) throw insertError;
       setTicket({ ...ticket, status: "receipt_submitted", payment_status: "submitted" });
-      setNotice("Receipt submitted successfully. Payment is pending review; your ticket is not confirmed until the booking team verifies the payment.");
+      setNotice(ticket.customer_status_hidden?"Receipt uploaded successfully. The booking team is updating your request.":"Receipt submitted successfully. Payment is pending review; your ticket is not confirmed until the booking team verifies the payment.");
       setFile(null); setPaymentReference("");
     } catch (e) { setError(e instanceof Error ? e.message : "Could not submit the receipt. Please try again."); }
     finally { setUploading(false); }
