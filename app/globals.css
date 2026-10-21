@@ -941,9 +941,9 @@ html[data-display-scale="75"]{font-size:75%}html[data-display-scale="80"]{font-s
 /* Final accessibility and contrast fixes requested for Book Vacation. */
 html,body{max-width:100%;overflow-x:clip}
 body,.travel-page,.bv-home{color:#102b45}
-body *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none}
-input,textarea,select,[contenteditable="true"],[role="textbox"]{-webkit-user-select:text!important;user-select:text!important;-webkit-touch-callout:default}
-input::selection,textarea::selection{background:#b9d9ff;color:#082c55}
+/* Keep all site content selectable and copyable on desktop and mobile. */
+body *{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+::selection{background:#b9d9ff;color:#082c55}
 .travel-footer.sky-shell-footer{background:#06284e!important;color:#eaf3ff!important}
 .travel-footer.sky-shell-footer .travel-brand,.travel-footer.sky-shell-footer .travel-brand span,
 .travel-footer.sky-shell-footer .travel-footer-grid strong{color:#fff!important}
