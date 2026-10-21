@@ -81,5 +81,19 @@ export default function SiteTranslation(){
   window.addEventListener("book-vacation-language-change",onLanguage);
   return()=>{active=false;observer?.disconnect();window.removeEventListener("book-vacation-language-change",onLanguage)};
  },[]);
- return null;
+ return (
+  <div data-no-translate style={{position:"fixed",right:14,bottom:14,zIndex:9999,display:"flex",alignItems:"center",gap:6,padding:"7px 9px",borderRadius:12,background:"rgba(255,255,255,.97)",border:"1px solid rgba(15,23,42,.14)",boxShadow:"0 4px 18px rgba(15,23,42,.12)"}}>
+   <span aria-hidden="true" style={{fontSize:16}}>🌐</span>
+   <label htmlFor="book-vacation-language-select" style={{fontSize:12,fontWeight:600,color:"#334155"}}>Language</label>
+   <select id="book-vacation-language-select" aria-label="Choose language" value={currentLanguage()} onChange={(event)=>{const value=event.target.value as Language;try{localStorage.setItem("book-vacation-language",value)}catch{};window.dispatchEvent(new CustomEvent("book-vacation-language-change",{detail:value}));applyLocalLanguage(value)}} style={{maxWidth:135,fontSize:12,fontWeight:600,color:"#0f172a",background:"#fff",border:"1px solid #cbd5e1",borderRadius:8,padding:"6px 8px",outlineOffset:2}}>
+    <option value="en">English</option>
+    <option value="pt">Português</option>
+    <option value="es">Español</option>
+    <option value="fr">Français</option>
+    <option value="de">Deutsch</option>
+    <option value="ar">العربية</option>
+    <option value="vi">🇻🇳 Tiếng Việt</option>
+   </select>
+  </div>
+ );
 }
