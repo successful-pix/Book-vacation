@@ -1,6 +1,6 @@
 "use client";
 import {FormEvent,useCallback,useEffect,useState} from "react";
-import {ArrowLeft,CheckCircle2,Headphones,LogIn,RefreshCw,Send,ShieldCheck,UserRound} from "lucide-react";
+import {ArrowLeft,CheckCircle2,Headphones,Image as ImageIcon,LogIn,Paperclip,RefreshCw,Send,ShieldCheck,UserRound} from "lucide-react";
 import Link from "next/link";
 import {supabase} from "../lib/supabase";
 type Conversation={id:string;conversation_reference:string;customer_user_id:string|null;guest_access_token:string;customer_name:string;customer_email:string;subject:string;status:string;created_at:string;updated_at:string};
