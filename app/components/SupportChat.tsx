@@ -10,9 +10,8 @@ const apiKey=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY||process.env.NEXT_
 const ATTACHMENT_BUCKET="support-chat-attachments";
 const MAX_IMAGE_BYTES=5*1024*1024;
 const ALLOWED_IMAGE_TYPES=["image/jpeg","image/png","image/webp"];
-function readSaved():Conversation[]{try{const value=JSON.parse(sessionStorage.getItem("book-vacation-guest-support-conversations")||"[]");return Array.isArray(value)?value.filter((x:any)=>x?.id&&x?.guest_access_token&&x?.customer_user_id==null):[]}catch{return []}}
-function saveConversation(conversation:Conversation){if(conversation.customer_user_id)return;try{const previous=readSaved().filter(x=>x.id!==conversation.id);sessionStorage.setItem("book-vacation-guest-support-conversations",JSON.stringify([conversation,...previous].slice(0,10)))}catch{}}
-function clearLegacyAccountChats(){try{localStorage.removeItem("book-vacation-support-conversations");localStorage.removeItem("book-vacation-support-active")}catch{}}
+function readSaved():Conversation[]{try{const stored=localStorage.getItem("book-vacation-support-conversations-v2")||sessionStorage.getItem("book-vacation-guest-support-conversations")||"[]";const value=JSON.parse(stored);const list=Array.isArray(value)?value.filter((x:any)=>x?.id&&x?.guest_access_token):[];if(list.length)localStorage.setItem("book-vacation-support-conversations-v2",JSON.stringify(list.slice(0,30)));return list}catch{return []}}
+function saveConversation(conversation:Conversation){try{const previous=readSaved().filter(x=>x.id!==conversation.id);const next=[conversation,...previous].slice(0,30);localStorage.setItem("book-vacation-support-conversations-v2",JSON.stringify(next));sessionStorage.setItem("book-vacation-guest-support-conversations",JSON.stringify(next.filter(x=>x.customer_user_id==null)))}catch{}}
 async function supportClient(token:string,session?:{access_token:string;refresh_token:string}|null){const client=createClient(apiUrl,apiKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},global:{headers:{"x-support-access-token":token||crypto.randomUUID()}}});if(session)await client.auth.setSession({access_token:session.access_token,refresh_token:session.refresh_token});return client}
 export default function SupportChat(){
  const [conversations,setConversations]=useState<Conversation[]>([]);
@@ -26,29 +25,42 @@ export default function SupportChat(){
  const refreshConversations=useCallback(async()=>{
   setError("");
   try{
-   clearLegacyAccountChats();
    const {data:{session}}=await supabase.auth.getSession();
-   let list:Conversation[]=readSaved();
+   let saved=readSaved();
+   let accountList:Conversation[]=[];
    if(session?.user){
+    // Securely attach guest conversations to the account using each conversation's private access token.
+    for(const guest of saved.filter(item=>item.customer_user_id==null)){
+     try{
+      const client=await supportClient(guest.guest_access_token,session);
+      const {data:claimed,error:claimError}=await client.from("support_conversations").update({customer_user_id:session.user.id}).eq("id",guest.id).is("customer_user_id",null).select("*").maybeSingle();
+      if(!claimError&&claimed){saveConversation(claimed as Conversation);saved=saved.map(item=>item.id===guest.id?claimed as Conversation:item);}
+     }catch{/* Keep the local conversation available if claiming must be retried. */}
+    }
     const {data,error}=await supabase.from("support_conversations").select("*").eq("customer_user_id",session.user.id).order("created_at",{ascending:false});
     if(error)throw error;
-    list=(data||[]) as Conversation[];
-    if(!activeRef.current||activeRef.current.customer_user_id!==session.user.id)setActive(list[0]||null);
+    accountList=(data||[]) as Conversation[];
+    const byId=new Map(accountList.map(item=>[item.id,item]));
+    const merged=[...accountList,...saved.map(item=>byId.get(item.id)||item).filter(item=>!byId.has(item.id))];
+    const unique=Array.from(new Map(merged.map(item=>[item.id,item])).values()).sort((a,b)=>new Date(b.created_at).getTime()-new Date(a.created_at).getTime());
+    setConversations(unique);
+    const preferred=activeRef.current?unique.find(item=>item.id===activeRef.current?.id):null;
+    if(!preferred||(!preferred.customer_user_id&&preferred.customer_user_id!==null))setActive(unique[0]||null);
+    else setActive(preferred);
     if(!nameRef.current){setName(String(session.user.user_metadata?.full_name||""));setEmail(session.user.email||"")}
-   }else if(activeRef.current?.customer_user_id){
-    setActive(null);
-    setMessages([]);
+   }else{
+    setConversations(saved.filter(item=>item.customer_user_id==null));
+    if(activeRef.current?.customer_user_id){setActive(null);setMessages([])}
+    else if(!activeRef.current){let preferredId:string|null=null;try{preferredId=localStorage.getItem("book-vacation-guest-support-active")||sessionStorage.getItem("book-vacation-guest-support-active")}catch{};setActive(saved.find(item=>item.id===preferredId&&item.customer_user_id==null)||saved.find(item=>item.customer_user_id==null)||null)}
    }
-   setConversations(list);
-   if(!session?.user&&!activeRef.current&&list.length){const preferred=(()=>{try{return sessionStorage.getItem("book-vacation-guest-support-active")}catch{return null}})();setActive(list.find(x=>x.id===preferred)||list[0])}
   }catch(e){setError(e instanceof Error?e.message:"We couldn't load your support conversations. Please try again.")}finally{setLoading(false)}
  },[]);
  useEffect(()=>{void refreshConversations()},[refreshConversations]);
- useEffect(()=>{const {data:{subscription}}=supabase.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session){setActive(null);setMessages([]);setConversations(readSaved());try{sessionStorage.removeItem("book-vacation-guest-support-active")}catch{};setLoading(false)}else if(event==="SIGNED_IN"||event==="TOKEN_REFRESHED"){setActive(null);setMessages([]);setLoading(true);void refreshConversations()}});return()=>subscription.unsubscribe()},[refreshConversations]);
+ useEffect(()=>{const {data:{subscription}}=supabase.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session){setActive(null);setMessages([]);setConversations(readSaved().filter(item=>item.customer_user_id==null));setLoading(false)}else if(event==="SIGNED_IN"){setLoading(true);void refreshConversations()}});return()=>subscription.unsubscribe()},[refreshConversations]);
  const loadMessages=useCallback(async(conversation:Conversation)=>{
   try{const {data:{session}}=await supabase.auth.getSession();const ownedSession=session?.user?.id===conversation.customer_user_id?session:null;const client=await supportClient(conversation.guest_access_token,ownedSession);const {data,error}=await client.from("support_messages").select("id,conversation_id,sender_user_id,sender_type,body,attachment_path,created_at").eq("conversation_id",conversation.id).order("created_at",{ascending:true});if(error)throw error;const hydrated=await Promise.all((data||[]).map(async(row:any)=>{if(!row.attachment_path)return {...row,attachment_url:null};const {data:signed,error:signedError}=await client.storage.from("support-chat-attachments").createSignedUrl(row.attachment_path,3600);return {...row,attachment_url:signedError?null:signed?.signedUrl||null}}));setMessages(previous=>{const next=hydrated as ChatMessage[];if(previous.length===next.length&&previous.every((message,index)=>message.id===next[index]?.id&&message.body===next[index]?.body&&message.attachment_path===next[index]?.attachment_path&&message.created_at===next[index]?.created_at))return previous;return next})}catch(e){setError(e instanceof Error?e.message:"Messages couldn't be loaded. Reopen the conversation and try again.")}
  },[]);
- useEffect(()=>{if(!active){setMessages([]);return}let alive=true;let channel:any=null;try{sessionStorage.setItem(active.customer_user_id?"book-vacation-customer-support-active":"book-vacation-guest-support-active",active.id)}catch{}void loadMessages(active);(async()=>{try{const {data:{session}}=await supabase.auth.getSession();const ownedSession=session?.user?.id===active.customer_user_id?session:null;const client=await supportClient(active.guest_access_token,ownedSession);if(!alive)return;channel=client.channel("customer-support-messages-"+active.id).on("postgres_changes",{event:"*",schema:"public",table:"support_messages",filter:"conversation_id=eq."+active.id},()=>{if(alive)void loadMessages(active)}).on("postgres_changes",{event:"*",schema:"public",table:"support_conversations",filter:"id=eq."+active.id},()=>{if(alive)void refreshConversations()}).subscribe();}catch(e){if(alive)setError(e instanceof Error?e.message:"Live message connection failed. Please reopen support.")}})();return()=>{alive=false;if(channel)void channel.unsubscribe()}},[active,loadMessages]);
+ useEffect(()=>{if(!active){setMessages([]);return}let alive=true;let channel:any=null;try{localStorage.setItem(active.customer_user_id?"book-vacation-customer-support-active":"book-vacation-guest-support-active",active.id);sessionStorage.setItem(active.customer_user_id?"book-vacation-customer-support-active":"book-vacation-guest-support-active",active.id)}catch{}void loadMessages(active);let fallbackTimer:ReturnType<typeof setInterval>|null=null;(async()=>{try{const {data:{session}}=await supabase.auth.getSession();const ownedSession=session?.user?.id===active.customer_user_id?session:null;const client=await supportClient(active.guest_access_token,ownedSession);if(!alive)return;channel=client.channel("customer-support-messages-"+active.id).on("postgres_changes",{event:"*",schema:"public",table:"support_messages",filter:"conversation_id=eq."+active.id},()=>{if(alive)void loadMessages(active)}).on("postgres_changes",{event:"*",schema:"public",table:"support_conversations",filter:"id=eq."+active.id},()=>{if(alive)void refreshConversations()}).subscribe();if(!ownedSession){fallbackTimer=setInterval(()=>{if(alive){void loadMessages(active);void refreshConversations()}},2500)}}catch(e){if(alive)setError(e instanceof Error?e.message:"Live message connection failed. Please reopen support.")}})();return()=>{alive=false;if(fallbackTimer)clearInterval(fallbackTimer);if(channel)void channel.unsubscribe()}},[active,loadMessages,refreshConversations]);
  async function startConversation(e:FormEvent){e.preventDefault();setBusy(true);setError("");setNotice("");try{
   const {data:{session}}=await supabase.auth.getSession();const token=crypto.randomUUID();const client=await supportClient(token,session);
   const {data,error}=await client.from("support_conversations").insert({customer_user_id:session?.user.id||null,guest_access_token:token,customer_name:name.trim(),customer_email:email.trim(),subject:subject.trim()}).select("*").single();
