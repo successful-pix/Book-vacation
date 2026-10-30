@@ -10,8 +10,9 @@ const apiKey=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY||process.env.NEXT_
 const ATTACHMENT_BUCKET="support-chat-attachments";
 const MAX_IMAGE_BYTES=5*1024*1024;
 const ALLOWED_IMAGE_TYPES=["image/jpeg","image/png","image/webp"];
-function readSaved():Conversation[]{try{const value=JSON.parse(localStorage.getItem("book-vacation-support-conversations")||"[]");return Array.isArray(value)?value.filter((x:any)=>x?.id&&x?.guest_access_token):[]}catch{return []}}
-function saveConversation(conversation:Conversation){try{const previous=readSaved().filter(x=>x.id!==conversation.id);localStorage.setItem("book-vacation-support-conversations",JSON.stringify([conversation,...previous].slice(0,25)))}catch{}}
+function readSaved():Conversation[]{try{const value=JSON.parse(sessionStorage.getItem("book-vacation-guest-support-conversations")||"[]");return Array.isArray(value)?value.filter((x:any)=>x?.id&&x?.guest_access_token&&x?.customer_user_id==null):[]}catch{return []}}
+function saveConversation(conversation:Conversation){if(conversation.customer_user_id)return;try{const previous=readSaved().filter(x=>x.id!==conversation.id);sessionStorage.setItem("book-vacation-guest-support-conversations",JSON.stringify([conversation,...previous].slice(0,10)))}catch{}}
+function clearLegacyAccountChats(){try{localStorage.removeItem("book-vacation-support-conversations");localStorage.removeItem("book-vacation-support-active")}catch{}}
 async function supportClient(token:string,session?:{access_token:string;refresh_token:string}|null){const client=createClient(apiUrl,apiKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},global:{headers:{"x-support-access-token":token||crypto.randomUUID()}}});if(session)await client.auth.setSession({access_token:session.access_token,refresh_token:session.refresh_token});return client}
 export default function SupportChat(){
  const [conversations,setConversations]=useState<Conversation[]>([]);
@@ -22,34 +23,36 @@ export default function SupportChat(){
  const refreshConversations=useCallback(async()=>{
   setError("");
   try{
-   const saved=readSaved();
+   clearLegacyAccountChats();
    const {data:{session}}=await supabase.auth.getSession();
-   let list=saved;
+   let list:Conversation[]=readSaved();
    if(session?.user){
     const {data,error}=await supabase.from("support_conversations").select("*").eq("customer_user_id",session.user.id).order("created_at",{ascending:false});
     if(error)throw error;
-    const localById=new Map(saved.map(x=>[x.id,x]));
-    const remote=(data||[]).map((x:any)=>({...x,guest_access_token:x.guest_access_token||localById.get(x.id)?.guest_access_token||""})) as Conversation[];
-    const ids=new Set(remote.map(x=>x.id));list=[...remote,...saved.filter(x=>!ids.has(x.id))];
-    remote.forEach(saveConversation);
+    list=(data||[]) as Conversation[];
+    if(!active||active.customer_user_id!==session.user.id)setActive(list[0]||null);
+    if(!name){setName(String(session.user.user_metadata?.full_name||""));setEmail(session.user.email||"")}
+   }else if(active?.customer_user_id){
+    setActive(null);
+    setMessages([]);
    }
    setConversations(list);
-   if(!active&&list.length){const preferred=(()=>{try{return localStorage.getItem("book-vacation-support-active")}catch{return null}})();setActive(list.find(x=>x.id===preferred)||list[0])}
-   if(!name&&session?.user){setName(String(session.user.user_metadata?.full_name||""));setEmail(session.user.email||"")}
+   if(!session?.user&&!active&&list.length){const preferred=(()=>{try{return sessionStorage.getItem("book-vacation-guest-support-active")}catch{return null}})();setActive(list.find(x=>x.id===preferred)||list[0])}
   }catch(e){setError(e instanceof Error?e.message:"We couldn't load your support conversations. Please try again.")}finally{setLoading(false)}
  },[active,name]);
  useEffect(()=>{void refreshConversations()},[refreshConversations]);
+ useEffect(()=>{const {data:{subscription}}=supabase.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session){setActive(null);setMessages([]);setConversations(readSaved());try{sessionStorage.removeItem("book-vacation-guest-support-active")}catch{};setLoading(false)}else if(event==="SIGNED_IN"||event==="TOKEN_REFRESHED"){setActive(null);setMessages([]);setLoading(true);void refreshConversations()}});return()=>subscription.unsubscribe()},[refreshConversations]);
  const loadMessages=useCallback(async(conversation:Conversation)=>{
   try{const {data:{session}}=await supabase.auth.getSession();const ownedSession=session?.user?.id===conversation.customer_user_id?session:null;const client=await supportClient(conversation.guest_access_token,ownedSession);const {data,error}=await client.from("support_messages").select("id,conversation_id,sender_user_id,sender_type,body,attachment_path,created_at").eq("conversation_id",conversation.id).order("created_at",{ascending:true});if(error)throw error;const hydrated=await Promise.all((data||[]).map(async(row:any)=>{if(!row.attachment_path)return {...row,attachment_url:null};const {data:signed,error:signedError}=await client.storage.from("support-chat-attachments").createSignedUrl(row.attachment_path,3600);return {...row,attachment_url:signedError?null:signed?.signedUrl||null}}));setMessages(hydrated as ChatMessage[])}catch(e){setError(e instanceof Error?e.message:"Messages couldn't be loaded. Reopen the conversation and try again.")}
  },[]);
- useEffect(()=>{if(!active){setMessages([]);return}try{localStorage.setItem("book-vacation-support-active",active.id)}catch{}void loadMessages(active);const timer=window.setInterval(()=>void loadMessages(active),8000);return()=>window.clearInterval(timer)},[active,loadMessages]);
+ useEffect(()=>{if(!active){setMessages([]);return}try{sessionStorage.setItem(active.customer_user_id?"book-vacation-customer-support-active":"book-vacation-guest-support-active",active.id)}catch{}void loadMessages(active);const timer=window.setInterval(()=>void loadMessages(active),8000);return()=>window.clearInterval(timer)},[active,loadMessages]);
  async function startConversation(e:FormEvent){e.preventDefault();setBusy(true);setError("");setNotice("");try{
   const {data:{session}}=await supabase.auth.getSession();const token=crypto.randomUUID();const client=await supportClient(token,session);
   const {data,error}=await client.from("support_conversations").insert({customer_user_id:session?.user.id||null,guest_access_token:token,customer_name:name.trim(),customer_email:email.trim(),subject:subject.trim()}).select("*").single();
   if(error)throw error;const conversation=data as Conversation;
   let uploadedPath:string|null=null;if(attachment){if(!attachment.type.startsWith("image/"))throw new Error("Please choose an image file.");if(attachment.size>MAX_IMAGE_BYTES)throw new Error("Images must be 5 MB or smaller.");const ext=(attachment.name.split(".").pop()||"jpg").toLowerCase();uploadedPath=`${conversation.id}/${conversation.guest_access_token}/${crypto.randomUUID()}.${ext}`;const {error:uploadError}=await client.storage.from(ATTACHMENT_BUCKET).upload(uploadedPath,attachment,{contentType:attachment.type,upsert:false});if(uploadError)throw uploadError;}const {error:messageError}=await client.from("support_messages").insert({conversation_id:conversation.id,sender_user_id:session?.user.id||null,sender_type:"customer",body:firstMessage.trim()||"Image attachment",attachment_path:uploadedPath});
   if(messageError)throw messageError;
-  saveConversation(conversation);setConversations(old=>[conversation,...old.filter(x=>x.id!==conversation.id)]);setActive(conversation);setFirstMessage("");setAttachment(null);setNotice("Your support conversation has been opened. Keep the reference and private access code safe.");
+  if(!conversation.customer_user_id)saveConversation(conversation);setConversations(old=>[conversation,...old.filter(x=>x.id!==conversation.id)]);setActive(conversation);setFirstMessage("");setAttachment(null);setNotice("Your support conversation has been opened. Keep the reference and private access code safe.");
  }catch(e){setError(e instanceof Error?e.message:"We couldn't start your support conversation. Please try again.")}finally{setBusy(false)}}
  async function sendReply(e:FormEvent){e.preventDefault();if(!active||(!reply.trim()&&!selectedImage))return;setBusy(true);setError("");setNotice("");try{
   const {data:{session}}=await supabase.auth.getSession();
