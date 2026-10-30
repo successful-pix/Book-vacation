@@ -1118,3 +1118,20 @@ input:not([type=radio]):not([type=checkbox]):focus,select:focus,textarea:focus{b
 .support-chat-attachment-image{display:block;width:auto;max-width:min(100%,320px);max-height:300px;object-fit:contain;border:1px solid #e2e8f0;border-radius:12px;background:#fff}
 .support-chat-message-bubble p{overflow-wrap:anywhere}
 @media(max-width:640px){.support-chat-composer-tools{align-items:flex-start;flex-direction:column;gap:7px}.support-chat-image-preview{align-items:flex-start}.support-chat-attachment-image{max-width:100%;max-height:240px}}
+
+
+/* Support chat attachments */
+.support-chat-composer{display:grid;gap:8px;flex:1}
+.support-chat-attachment-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.support-attach-button{display:inline-flex!important;align-items:center;gap:6px;border:1px solid #dce7e2;border-radius:9px;padding:8px 10px;background:#fff;color:#126b5b;font-size:12px;font-weight:700;cursor:pointer}
+.support-attach-button input{display:none}
+.support-attachment-name{display:inline-flex;align-items:center;gap:6px;max-width:260px;padding:7px 9px;border-radius:9px;background:#edf6f1;color:#31534c;font-size:11px;overflow:hidden}
+.support-attachment-name button{border:0;background:transparent;padding:0;display:grid;place-items:center;color:#667775;cursor:pointer}
+.support-attachment-hint,.support-start-attachment small{font-size:10px;color:#7a8986}
+.support-start-attachment{display:grid;gap:6px}
+.support-start-attachment input{font-size:12px}
+.support-message-image-link{display:block;margin-top:8px;width:min(280px,100%);border-radius:12px;overflow:hidden;border:1px solid #dfe9e4;background:#f7faf8}
+.support-message-image{display:block;width:100%;height:auto;max-height:320px;object-fit:contain}
+.admin-support-image-link{display:inline-flex;flex-direction:column;gap:7px;margin-top:8px;color:#126b5b;font-size:11px;font-weight:700}
+.admin-support-image{display:block;width:min(300px,100%);max-height:340px;object-fit:contain;border:1px solid #dfe8f3;border-radius:12px;background:#f8fafc}
+.admin-support-image-link span{display:inline-flex;align-items:center;gap:5px}
