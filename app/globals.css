@@ -1077,3 +1077,30 @@ input:not([type=radio]):not([type=checkbox]):focus,select:focus,textarea:focus{b
 @media(prefers-reduced-motion:reduce){
  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+
+/* Flight search feedback: clear progress without implying live airline inventory. */
+@keyframes bv-spin{to{transform:rotate(360deg)}}
+@keyframes bv-progress-sweep{0%{transform:translateX(-110%)}100%{transform:translateX(310%)}}
+@keyframes bv-card-arrive{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.flight-search-form .flight-input{transition:opacity .22s ease,transform .22s ease}
+.flight-search-form.is-searching .flight-input{opacity:.72}
+.flight-search-form .travel-search-button{position:relative;overflow:hidden;transition:transform .2s ease,box-shadow .2s ease,opacity .2s ease}
+.flight-search-form .travel-search-button:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(18,107,91,.2)}
+.flight-search-form .travel-search-button.is-loading{cursor:wait;opacity:.96}
+.flight-search-form .travel-search-button.is-loading:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.2) 48%,transparent 76%);transform:translateX(-100%);animation:bv-progress-sweep 1.25s ease-in-out infinite}
+.bv-search-spinner{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:bv-spin .75s linear infinite;flex:0 0 auto}
+.bv-search-progress:empty{display:none}
+.bv-search-progress{margin-top:12px;animation:bv-fade-in .2s ease both}
+.bv-search-progress .bv-progress-track{display:block;height:4px;overflow:hidden;border-radius:999px;background:rgba(18,107,91,.12)}
+.bv-search-progress .bv-progress-track>span{display:block;width:36%;height:100%;border-radius:inherit;background:#126b5b;animation:bv-progress-sweep 1.15s ease-in-out infinite}
+.bv-search-progress p{margin:7px 0 0;font-size:12px;color:#52657a;text-align:center}
+.travel-content>.supplier-notice,.travel-content>.feature-grid,.travel-content>.flight-request-form{animation:bv-card-arrive .48s ease both}
+.travel-content>.feature-grid>article{animation:bv-card-arrive .5s ease both}
+.travel-content>.feature-grid>article:nth-child(2){animation-delay:.08s}
+.travel-content>.feature-grid>article:nth-child(3){animation-delay:.16s}
+.flight-request-form button,.flight-request-form input,.flight-request-form select,.flight-request-form textarea{transition:box-shadow .2s ease,border-color .2s ease,transform .2s ease}
+.flight-request-form button:active{transform:scale(.985)}
+@media(prefers-reduced-motion:reduce){
+ .bv-search-spinner,.bv-progress-track>span,.travel-search-button.is-loading:after{animation:none!important}
+}
