@@ -22,6 +22,7 @@ export default function SupportChat(){
  const activeRef=useRef(active);const nameRef=useRef(name);
  useEffect(()=>{activeRef.current=active},[active]);
  useEffect(()=>{nameRef.current=name},[name]);
+ useEffect(()=>{if(!notice)return;const timer=setTimeout(()=>setNotice(""),4000);return()=>clearTimeout(timer)},[notice]);
  const refreshConversations=useCallback(async()=>{
   setError("");
   try{
