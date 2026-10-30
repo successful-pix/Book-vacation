@@ -1,5 +1,5 @@
 "use client";
-import {FormEvent,useCallback,useEffect,useMemo,useState} from "react";
+import {FormEvent,useCallback,useEffect,useMemo,useRef,useState} from "react";
 import {createClient} from "@supabase/supabase-js";
 import {ArrowRight,CheckCircle2,Clock3,Headphones,Image as ImageIcon,LockKeyhole,MessageCircle,Paperclip,RefreshCw,Send,ShieldCheck,UserRound,X} from "lucide-react";
 import {supabase} from "../lib/supabase";
@@ -20,6 +20,9 @@ export default function SupportChat(){
  const [messages,setMessages]=useState<ChatMessage[]>([]);
  const [name,setName]=useState("");const [email,setEmail]=useState("");const [subject,setSubject]=useState("Payment assistance");const [firstMessage,setFirstMessage]=useState("");const [attachment,setAttachment]=useState<File|null>(null);
  const [reply,setReply]=useState("");const [selectedImage,setSelectedImage]=useState<File|null>(null);const [imagePreview,setImagePreview]=useState("");const [loading,setLoading]=useState(true);const [busy,setBusy]=useState(false);const [error,setError]=useState("");const [notice,setNotice]=useState("");
+ const activeRef=useRef(active);const nameRef=useRef(name);
+ useEffect(()=>{activeRef.current=active},[active]);
+ useEffect(()=>{nameRef.current=name},[name]);
  const refreshConversations=useCallback(async()=>{
   setError("");
   try{
@@ -30,20 +33,20 @@ export default function SupportChat(){
     const {data,error}=await supabase.from("support_conversations").select("*").eq("customer_user_id",session.user.id).order("created_at",{ascending:false});
     if(error)throw error;
     list=(data||[]) as Conversation[];
-    if(!active||active.customer_user_id!==session.user.id)setActive(list[0]||null);
-    if(!name){setName(String(session.user.user_metadata?.full_name||""));setEmail(session.user.email||"")}
-   }else if(active?.customer_user_id){
+    if(!activeRef.current||activeRef.current.customer_user_id!==session.user.id)setActive(list[0]||null);
+    if(!nameRef.current){setName(String(session.user.user_metadata?.full_name||""));setEmail(session.user.email||"")}
+   }else if(activeRef.current?.customer_user_id){
     setActive(null);
     setMessages([]);
    }
    setConversations(list);
-   if(!session?.user&&!active&&list.length){const preferred=(()=>{try{return sessionStorage.getItem("book-vacation-guest-support-active")}catch{return null}})();setActive(list.find(x=>x.id===preferred)||list[0])}
+   if(!session?.user&&!activeRef.current&&list.length){const preferred=(()=>{try{return sessionStorage.getItem("book-vacation-guest-support-active")}catch{return null}})();setActive(list.find(x=>x.id===preferred)||list[0])}
   }catch(e){setError(e instanceof Error?e.message:"We couldn't load your support conversations. Please try again.")}finally{setLoading(false)}
- },[active,name]);
+ },[]);
  useEffect(()=>{void refreshConversations()},[refreshConversations]);
  useEffect(()=>{const {data:{subscription}}=supabase.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session){setActive(null);setMessages([]);setConversations(readSaved());try{sessionStorage.removeItem("book-vacation-guest-support-active")}catch{};setLoading(false)}else if(event==="SIGNED_IN"||event==="TOKEN_REFRESHED"){setActive(null);setMessages([]);setLoading(true);void refreshConversations()}});return()=>subscription.unsubscribe()},[refreshConversations]);
  const loadMessages=useCallback(async(conversation:Conversation)=>{
-  try{const {data:{session}}=await supabase.auth.getSession();const ownedSession=session?.user?.id===conversation.customer_user_id?session:null;const client=await supportClient(conversation.guest_access_token,ownedSession);const {data,error}=await client.from("support_messages").select("id,conversation_id,sender_user_id,sender_type,body,attachment_path,created_at").eq("conversation_id",conversation.id).order("created_at",{ascending:true});if(error)throw error;const hydrated=await Promise.all((data||[]).map(async(row:any)=>{if(!row.attachment_path)return {...row,attachment_url:null};const {data:signed,error:signedError}=await client.storage.from("support-chat-attachments").createSignedUrl(row.attachment_path,3600);return {...row,attachment_url:signedError?null:signed?.signedUrl||null}}));setMessages(hydrated as ChatMessage[])}catch(e){setError(e instanceof Error?e.message:"Messages couldn't be loaded. Reopen the conversation and try again.")}
+  try{const {data:{session}}=await supabase.auth.getSession();const ownedSession=session?.user?.id===conversation.customer_user_id?session:null;const client=await supportClient(conversation.guest_access_token,ownedSession);const {data,error}=await client.from("support_messages").select("id,conversation_id,sender_user_id,sender_type,body,attachment_path,created_at").eq("conversation_id",conversation.id).order("created_at",{ascending:true});if(error)throw error;const hydrated=await Promise.all((data||[]).map(async(row:any)=>{if(!row.attachment_path)return {...row,attachment_url:null};const {data:signed,error:signedError}=await client.storage.from("support-chat-attachments").createSignedUrl(row.attachment_path,3600);return {...row,attachment_url:signedError?null:signed?.signedUrl||null}}));setMessages(previous=>{const next=hydrated as ChatMessage[];if(previous.length===next.length&&previous.every((message,index)=>message.id===next[index]?.id&&message.body===next[index]?.body&&message.attachment_path===next[index]?.attachment_path&&message.created_at===next[index]?.created_at))return previous;return next})}catch(e){setError(e instanceof Error?e.message:"Messages couldn't be loaded. Reopen the conversation and try again.")}
  },[]);
  useEffect(()=>{if(!active){setMessages([]);return}try{sessionStorage.setItem(active.customer_user_id?"book-vacation-customer-support-active":"book-vacation-guest-support-active",active.id)}catch{}void loadMessages(active);const timer=window.setInterval(()=>void loadMessages(active),8000);return()=>window.clearInterval(timer)},[active,loadMessages]);
  async function startConversation(e:FormEvent){e.preventDefault();setBusy(true);setError("");setNotice("");try{
