@@ -52,8 +52,11 @@ export default function SupportChat(){
   saveConversation(conversation);setConversations(old=>[conversation,...old.filter(x=>x.id!==conversation.id)]);setActive(conversation);setFirstMessage("");setAttachment(null);setNotice("Your support conversation has been opened. Keep the reference and private access code safe.");
  }catch(e){setError(e instanceof Error?e.message:"We couldn't start your support conversation. Please try again.")}finally{setBusy(false)}}
  async function sendReply(e:FormEvent){e.preventDefault();if(!active||(!reply.trim()&&!selectedImage))return;setBusy(true);setError("");setNotice("");try{
-  const {data:{session}}=await supabase.auth.getSession();const client=await supportClient(active.guest_access_token,session);
-  const senderId=active.customer_user_id?session?.user.id||null:null;let attachmentPath:string|null=null;
+  const {data:{session}}=await supabase.auth.getSession();
+  const ownedSession=session?.user?.id===active.customer_user_id?session:null;
+  if(active.customer_user_id&&!ownedSession)throw new Error("Please sign in to the account that started this support conversation, then try again.");
+  const client=await supportClient(active.guest_access_token,ownedSession);
+  const senderId=ownedSession?.user.id||null;let attachmentPath:string|null=null;
   if(selectedImage){const extension=selectedImage.type==="image/png"?"png":selectedImage.type==="image/webp"?"webp":"jpg";attachmentPath=active.id+"/"+active.guest_access_token+"/"+crypto.randomUUID()+"."+extension;const {error:uploadError}=await client.storage.from("support-chat-attachments").upload(attachmentPath,selectedImage,{contentType:selectedImage.type,upsert:false});if(uploadError)throw new Error("Picture upload failed: "+uploadError.message)}
   const {error}=await client.from("support_messages").insert({conversation_id:active.id,sender_user_id:senderId,sender_type:"customer",body:reply.trim()||"Picture attachment",attachment_path:attachmentPath});
   if(error)throw new Error("Message could not be saved: "+error.message);setReply("");setSelectedImage(null);setImagePreview("");setNotice("Message sent.");await loadMessages(active);
