@@ -38,6 +38,15 @@ export default function SupportChat(){
       if(!claimError&&claimed){saveConversation(claimed as Conversation);saved=saved.map(item=>item.id===guest.id?claimed as Conversation:item);}
      }catch{/* Keep the local conversation available if claiming must be retried. */}
     }
+    // Recover guest chats started on another device when the signed-in email is verified and matches.
+    if(session.user.email){
+     const {data:unclaimed,error:unclaimedError}=await supabase.from("support_conversations").select("*").is("customer_user_id",null).ilike("customer_email",session.user.email);
+     if(unclaimedError)throw unclaimedError;
+     for(const guest of (unclaimed||[]) as Conversation[]){
+      const {data:claimed,error:claimError}=await supabase.from("support_conversations").update({customer_user_id:session.user.id}).eq("id",guest.id).is("customer_user_id",null).select("*").maybeSingle();
+      if(!claimError&&claimed){saveConversation(claimed as Conversation);saved=[claimed as Conversation,...saved.filter(item=>item.id!==guest.id)];}
+     }
+    }
     const {data,error}=await supabase.from("support_conversations").select("*").eq("customer_user_id",session.user.id).order("created_at",{ascending:false});
     if(error)throw error;
     accountList=(data||[]) as Conversation[];
