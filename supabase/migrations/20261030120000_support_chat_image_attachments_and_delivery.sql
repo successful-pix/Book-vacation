@@ -30,8 +30,22 @@ with check (
 );
 
 drop policy if exists "Support chat customers and staff view attachments" on storage.objects;
-create policy "Support chat customers and staff view attachments"
-on storage.objects for select to anon, authenticated
+drop policy if exists "Support chat guest customer view attachments" on storage.objects;
+drop policy if exists "Support chat authenticated customer and staff view attachments" on storage.objects;
+create policy "Support chat guest customer view attachments"
+on storage.objects for select to anon
+using (
+  bucket_id = 'support-chat-attachments'
+  and exists (
+    select 1 from public.support_conversations c
+    where c.id::text = (storage.foldername(name))[1]
+      and c.guest_access_token::text = (storage.foldername(name))[2]
+      and c.customer_user_id is null
+  )
+);
+
+create policy "Support chat authenticated customer and staff view attachments"
+on storage.objects for select to authenticated
 using (
   bucket_id = 'support-chat-attachments'
   and (
