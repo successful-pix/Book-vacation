@@ -1034,3 +1034,46 @@ body{font-size:14px}
 .user-promote-button,.user-demote-button{border:0;border-radius:9px;padding:9px 11px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap}
 .user-promote-button{background:#1d4ed8;color:#fff}.user-demote-button{background:#fff1f2;color:#be123c}.user-promote-button:disabled,.user-demote-button:disabled{opacity:.55;cursor:wait}
 @media(max-width:640px){.booking-ops-users{padding:14px}.booking-ops-users-heading{flex-direction:column}.booking-ops-users-heading>button{width:100%;justify-content:center}.booking-ops-tabs button{flex:1;justify-content:center;padding:10px 8px;font-size:12px}}
+
+
+/* Book Vacation — subtle, accessible motion system */
+@keyframes bv-fade-up{from{opacity:0;transform:translate3d(0,18px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes bv-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes bv-header-drop{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bv-soft-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes bv-sheen{to{background-position-x:-200%}}
+@keyframes bv-pulse{0%,100%{box-shadow:0 0 0 0 rgba(18,107,91,.15)}50%{box-shadow:0 0 0 7px rgba(18,107,91,0)}}
+.travel-header,.sky-shell-topbar{animation:bv-header-drop .55s both}
+.bv-home .bv-hero-copy{animation:bv-fade-up .7s .08s both}
+.bv-home .bv-search-card{animation:bv-fade-up .7s .2s both}
+.bv-home .bv-hero-image{animation:bv-fade-in 1.1s both}
+.bv-home .bv-hero-points{animation:bv-fade-up .6s .24s both}
+.bv-home .bv-shortcuts>a{animation:bv-fade-up .55s both}
+.bv-home .bv-shortcuts>a:nth-child(2){animation-delay:.08s}
+.bv-home .bv-shortcuts>a:nth-child(3){animation-delay:.16s}
+.bv-home .bv-destination-card{animation:bv-fade-up .6s both;transition:transform .28s ease,box-shadow .28s ease}
+.bv-home .bv-destination-card:nth-child(3n + 2){animation-delay:.06s}
+.bv-home .bv-destination-card:nth-child(3n){animation-delay:.12s}
+.bv-home .bv-destination-card:hover{transform:translateY(-6px);box-shadow:0 18px 44px rgba(16,43,43,.12)}
+.bv-home .bv-destination-photo{overflow:hidden}
+.bv-home .bv-destination-photo:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 20%,rgba(255,255,255,.12) 45%,transparent 65%);transform:translateX(-110%);transition:transform .7s ease}
+.bv-home .bv-destination-card:hover .bv-destination-photo:before{transform:translateX(110%)}
+.bv-home .bv-destination-card:hover .bv-destination-photo{background-size:cover}
+.bv-home .bv-destination-body a,.bv-home .bv-view-all,.bv-home .bv-hero-history-link{transition:gap .2s ease,color .2s ease,transform .2s ease}
+.bv-home .bv-destination-body a:hover,.bv-home .bv-view-all:hover{gap:10px}
+.bv-home .bv-hero-track-link{transition:transform .22s ease,box-shadow .22s ease}
+.bv-home .bv-hero-track-link:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(16,43,43,.1)}
+.bv-home .bv-why-photo{transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.bv-home .bv-why-visual:hover .bv-why-photo{transform:scale(1.025)}
+button,a,.btn,.nav-cta{transition-property:transform,box-shadow,background-color,color,border-color;transition-duration:.2s;transition-timing-function:ease}
+button:active,.btn:active,.nav-cta:active{transform:scale(.98)}
+input:not([type=radio]):not([type=checkbox]),select,textarea{transition:border-color .2s ease,box-shadow .2s ease}
+input:not([type=radio]):not([type=checkbox]):focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(18,107,91,.11)}
+.card-image{transition:background-size .35s ease}
+.card:hover .card-image{filter:saturate(1.05)}
+.modal-backdrop{animation:bv-fade-in .2s ease both}
+.modal{animation:bv-fade-up .25s ease both}
+.travel-footer{animation:bv-fade-in .8s both}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
