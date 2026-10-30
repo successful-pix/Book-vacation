@@ -45,6 +45,7 @@ const destinations = [
   { name: "Argentina", flag: "🇦🇷", detail: "Mountain landscapes, vibrant Buenos Aires and wide-open spaces", image: "photo-1589909202802-8f4aadce1849", label: "SOUTHERN ADVENTURE" },
   { name: "Chile", flag: "🇨🇱", detail: "Andean peaks, desert scenery and Pacific coastlines", image: "photo-1519451241324-20b4ea2c4220", label: "LANDSCAPE JOURNEYS" },
   { name: "Colombia", flag: "🇨🇴", detail: "Colourful old towns, mountain views and Caribbean beaches", image: "photo-1536098561742-ca998e48cbcc", label: "COLOURFUL COLOMBIA" },
+  { name: "Costa Rica", flag: "🇨🇷", detail: "Rainforests, Pacific beaches and volcanic landscapes", image: "photo-1518509562904-e7ef99cdcc86", label: "CENTRAL AMERICA" },
   { name: "Peru", flag: "🇵🇪", detail: "Andean scenery, ancient sites and dramatic mountain trails", image: "photo-1526392060635-9d6019884377", label: "ANCIENT PATHS" },
   { name: "Hong Kong", flag: "🇭🇰", detail: "Harbour skylines, hillside views and night markets", image: "photo-1506976785307-8732e854ad03", label: "HARBOUR CITY" },
   { name: "Taiwan", flag: "🇹🇼", detail: "Mountain scenery, night markets and coastal rail journeys", image: "photo-1506869640319-fe1a24fd76dc", label: "ISLAND DISCOVERY" },
