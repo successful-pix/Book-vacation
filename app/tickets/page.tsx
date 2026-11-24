@@ -45,6 +45,7 @@ function rememberTicket(ticket:Ticket){
  }catch{}
 }
 export default function TicketsPage(){
+ const [paymentMethod,setPaymentMethod]=useState<"bank_transfer"|"crypto">("bank_transfer");
  const [countryCode,setCountryCode]=useState("BR"),[origin,setOrigin]=useState(""),[destination,setDestination]=useState(""),[tripType,setTripType]=useState<"oneway"|"roundtrip">("oneway"),[departure,setDeparture]=useState(""),[returnDate,setReturnDate]=useState(""),[travellers,setTravellers]=useState("1"),[cabin,setCabin]=useState("economy"),[name,setName]=useState(""),[email,setEmail]=useState(""),[phone,setPhone]=useState("");
  const [fareOverrides,setFareOverrides]=useState<Record<string,{oneWay:number;returnTrip:number}>>({});
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState(""),[current,setCurrent]=useState<Ticket|null>(null),[referenceInput,setReferenceInput]=useState(""),[accessInput,setAccessInput]=useState(""),[loadingRequest,setLoadingRequest]=useState(false),[receiptFile,setReceiptFile]=useState<File|null>(null),[paymentReference,setPaymentReference]=useState(""),[receiptBusy,setReceiptBusy]=useState(false),[emailConfigured,setEmailConfigured]=useState<boolean|null>(null),[clockNow,setClockNow]=useState(0);
