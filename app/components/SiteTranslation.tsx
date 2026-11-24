@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-type Language = "en" | "pt" | "es" | "fr" | "de" | "ar" | "vi";
+type Language = "en" | "pt" | "es" | "fr" | "de" | "ar" | "vi" | "el";
 
 const LANGUAGES: { code: Language; label: string }[] = [
   { code: "en", label: "🇬🇧 English" },
@@ -12,6 +12,7 @@ const LANGUAGES: { code: Language; label: string }[] = [
   { code: "de", label: "🇩🇪 Deutsch" },
   { code: "ar", label: "🇸🇦 العربية" },
   { code: "vi", label: "🇻🇳 Tiếng Việt" },
+  { code: "el", label: "🇬🇷 Ελληνικά" },
 ];
 
 declare global {
@@ -59,7 +60,7 @@ export default function SiteTranslation() {
         new TranslateElement(
           {
             pageLanguage: "en",
-            includedLanguages: "en,pt,es,fr,de,ar,vi",
+            includedLanguages: "en,pt,es,fr,de,ar,vi,el",
             autoDisplay: false,
           },
           "google_translate_element"
