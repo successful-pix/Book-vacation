@@ -1,7 +1,7 @@
 "use client";
 import { useEffect,useState } from "react";
 import Link from "next/link";
-import { ArrowRight, BedDouble, CalendarDays, CheckCircle2, Compass, Globe2, LogOut, MapPin, Plane, ShieldCheck, UserRound, WalletCards, Sparkles } from "lucide-react";
+import { ArrowRight, BedDouble, CalendarDays, CheckCircle2, Compass, Globe2, LogOut, MapPin, Plane, ShieldCheck, UserRound, WalletCards, Sparkles, Headphones } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { CURRENCIES,useCurrency } from "../components/CurrencyProvider";
 import { TravelFooter,TravelHeader } from "../components/TravelShell";
