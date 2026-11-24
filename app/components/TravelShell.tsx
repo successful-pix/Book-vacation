@@ -5,7 +5,7 @@ import { ArrowRight, Globe2, Headphones, Plane, ShieldCheck, Menu, X, House, Bed
 import { CurrencyPicker } from "./CurrencyProvider";
 import { supabase } from "../lib/supabase";
 import { CurrentLocation, LocationAutocomplete } from "./LocationLookup";
-const UI_LANGUAGES=[["en","English"],["pt","Português"],["es","Español"],["fr","Français"],["de","Deutsch"],["ar","العربية"],["vi","Tiếng Việt"]];
+const UI_LANGUAGES=[["en","English"],["pt","Português"],["es","Español"],["fr","Français"],["de","Deutsch"],["ar","العربية"],["vi","Tiếng Việt"],["el","🇬🇷 Ελληνικά"]];
 export function TravelHeader(){
  const [menuOpen,setMenuOpen]=useState(false);
  const [language,setLanguage]=useState("en");
